@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<BorderPane maxHeight="110.0" maxWidth="374.0" minHeight="110.0" minWidth="374.0" prefHeight="110.0" prefWidth="374.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <bottom>
+      <ProgressBar fx:id="prgBar" prefHeight="35.0" prefWidth="343.0" progress="0.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="15.0" />
+         </BorderPane.margin>
+      </ProgressBar>
+   </bottom>
+   <center>
+      <Label fx:id="lblSong" text="" BorderPane.alignment="CENTER_LEFT">
+         <padding>
+            <Insets left="20.0" />
+         </padding>
+      </Label>
+   </center>
+</BorderPane>

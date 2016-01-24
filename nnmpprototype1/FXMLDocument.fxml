@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="562.0" prefWidth="1002.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nnmpprototype1.FXMLDocumentController">
+   <center>
+<BorderPane minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
+   <top>
+      <BorderPane prefHeight="61.0" prefWidth="912.0" BorderPane.alignment="CENTER">
+         <right>
+            <HBox alignment="CENTER_RIGHT" prefHeight="64.0" prefWidth="326.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button fx:id="btnPlay" alignment="CENTER" mnemonicParsing="false">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <HBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="btnStop" mnemonicParsing="false">
+                     <HBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="btnPrev" mnemonicParsing="false">
+                     <HBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="btnNext" mnemonicParsing="false">
+                     <HBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Slider fx:id="sldVolume" orientation="VERTICAL">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
+                           </HBox.margin></Slider>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+            </HBox>
+         </right>
+         <left>
+            <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER_LEFT">
+               <left>
+                  <ImageView fx:id="ivAlbumArtPlaying" fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+               </left>
+               <center>
+                  <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label fx:id="lblSongPlaying">
+                           <padding>
+                              <Insets top="10.0" />
+                           </padding>
+                        </Label>
+                        <Label fx:id="lblArtistPlaying" />
+                        <Label fx:id="lblAlbumPlaying">
+                            <padding>
+                                <Insets bottom="10.0" /> 
+                            </padding>
+                        </Label>
+                     </children>
+                     <BorderPane.margin>
+                        <Insets left="10.0" />
+                     </BorderPane.margin>
+                  </VBox>
+               </center>
+               <BorderPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" />
+               </BorderPane.margin>
+            </BorderPane>
+         </left>
+         <center>
+            <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <center>
+                  <Slider BorderPane.alignment="CENTER" />
+               </center>
+               <top>
+                  <HBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
+                     <children>
+                        <HBox HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label text="0:00" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="TOP_RIGHT">
+                           <children>
+                              <Label fx:id="lblTotalDuration" alignment="CENTER_RIGHT" text="0:00" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </top>
+            </BorderPane>
+         </center>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets top="5.0" />
+         </padding>
+      </BorderPane>
+   </top>
+   <center>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <center>
+            <SplitPane dividerPositions="0.27912087912087913" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+              <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="414.0" prefWidth="115.0">
+                     <children>
+                        <BorderPane layoutX="25.0" layoutY="83.0" prefHeight="414.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <center>
+                              <TreeView fx:id="musicTree" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                           </center>
+                        </BorderPane>
+                     </children>
+                  </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                     <children>
+                        <BorderPane layoutX="169.0" layoutY="84.0" prefHeight="414.0" prefWidth="703.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <center>
+                              <SplitPane dividerPositions="0.6027777777777777" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
+                                <items>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                       <children>
+                                          <BorderPane layoutX="190.0" layoutY="44.0" prefHeight="301.0" prefWidth="650.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <center>
+                                                <TableView fx:id="audioTable" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                                  <columns>
+                                                    <TableColumn fx:id="trackCol" prefWidth="50.0" text="Track" />
+                                                    <TableColumn fx:id="titleCol" prefWidth="200.0" text="Title" />
+                                                    <TableColumn fx:id="artistCol" prefWidth="150.0" text="Artist" />
+                                                    <TableColumn fx:id="albumCol" prefWidth="200.0" text="Album" />
+                                                    <TableColumn fx:id="timeCol" prefWidth="50.0" text="Time" />
+                                                  </columns>
+                                                </TableView>
+                                             </center>
+                                          </BorderPane>
+                                       </children>
+                                    </AnchorPane>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                       <children>
+                                          <BorderPane layoutX="198.0" layoutY="-30.0" prefHeight="103.0" prefWidth="650.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <center>
+                                                <ListView fx:id="listView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                                             </center>
+                                          </BorderPane>
+                                       </children>
+                                    </AnchorPane>
+                                </items>
+                              </SplitPane>
+                           </center>
+                        </BorderPane>
+                     </children>
+                  </AnchorPane>
+              </items>
+            </SplitPane>
+         </center>
+      </BorderPane>
+   </center>
+</BorderPane>
+   </center>
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+          <MenuBar>
+            <menus>
+              <Menu mnemonicParsing="false" text="File">
+                <items>
+                  <MenuItem fx:id="importLibraryItem" mnemonicParsing="false" text="Import Library" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="quitItem" mnemonicParsing="false" text="Quit" />
+                </items>
+              </Menu>
+              <Menu mnemonicParsing="false" text="Edit">
+                <items>
+                    <MenuItem mnemonicParsing="false" text="Preferences…" />
+                </items>
+              </Menu>
+              <Menu mnemonicParsing="false" text="Help">
+                <items>
+                  <MenuItem mnemonicParsing="false" text="About NNMP" />
+                </items>
+              </Menu>
+            </menus>
+          </MenuBar>
+         </children>
+      </VBox>
+   </top>
+</BorderPane>
