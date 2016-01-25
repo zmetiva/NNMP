@@ -222,11 +222,8 @@ public class MediaPlayback {
     public void playNextTrack() {
         if (currentIndex < pqc.getPlaybackList().getSize() - 1) {
             curLine.stop();
-            curLine.flush();
-            curLine.close();
             refThread.interrupt();
             isPlaying = false;
-            curLine = null;
             ++currentIndex;
         }
     }
@@ -234,11 +231,8 @@ public class MediaPlayback {
     public void playPreviousTrack() {
         if (currentIndex > 0) {
             curLine.stop();
-            curLine.flush();
-            curLine.close();
             refThread.interrupt();
             isPlaying = false;
-            curLine = null;
             --currentIndex;
         }
     }

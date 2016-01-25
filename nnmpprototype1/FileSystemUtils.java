@@ -36,7 +36,7 @@ import static java.lang.Thread.*;
 public class FileSystemUtils {
     
     final private String[] EXTENTIONS = {"mp3", "wma", "ogg", "aac", "mp4", "wav"};
-    private ExecutorService threads = Executors.newFixedThreadPool(100000);
+    private ExecutorService threads = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     public Vector<Tag> tags = new Vector<>();
     public Vector<String> paths = new Vector<>();
     public Vector<Integer> lengths = new Vector<>();
@@ -55,7 +55,7 @@ public class FileSystemUtils {
         Vector<File> fileList = new Vector(Arrays.asList(directory.listFiles()));
 
 
-        Future fun = threads.submit(()-> {
+        /*Future fun = threads.submit(()-> {*/
             for (File file : fileList) {
                 if (file.isFile() && file.getName().endsWith(ext)) {
                     try {
@@ -88,7 +88,7 @@ public class FileSystemUtils {
                     getFiles(file.getAbsolutePath(), ext, db);
                 }
             }
-        });
+        //});
 
     }
     private void addItemsToDB(NNMPDB db){
