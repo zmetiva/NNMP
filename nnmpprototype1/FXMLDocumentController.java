@@ -26,13 +26,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -45,11 +42,6 @@ import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 import org.jaudiotagger.tag.images.Artwork;
 import javafx.stage.DirectoryChooser;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 
@@ -107,8 +99,9 @@ public class FXMLDocumentController implements Initializable {
         artistCol.setCellValueFactory(new PropertyValueFactory<>("artist"));
         albumCol.setCellValueFactory(new PropertyValueFactory<>("album"));
         timeCol.setCellValueFactory(new PropertyValueFactory<>("time"));
-        
+
         listView.setItems(playbackQueueController.getObsPlaybackList());
+
         audioTable.setItems(audioTableList);
         
         audioTable.setRowFactory( tv -> {
@@ -128,7 +121,7 @@ public class FXMLDocumentController implements Initializable {
                 }
                 
                 if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
-                    
+
                     if (mediaPlaybackController.isPlaybackActive()) {
                         mediaPlaybackController.stopAudioPlayback();
                     }
@@ -167,13 +160,44 @@ public class FXMLDocumentController implements Initializable {
         });
         
         btnPlay.setOnAction((ActionEvent actionEvent) -> {
-            nnmpprototype1.AudioFile file = (nnmpprototype1.AudioFile) audioTable.getSelectionModel().getSelectedItem();
-            play();
+            if(audioTable.getSelectionModel().getSelectedIndex() > -1) {
+                if (mediaPlaybackController.isPlaybackActive()) {
+                    mediaPlaybackController.stopAudioPlayback();
+                }
+
+                playbackQueueController.flush();
+                mediaPlaybackController.setPlaybackIndex(0);
+                nnmpprototype1.AudioFile rowData = (nnmpprototype1.AudioFile) audioTable.getSelectionModel().getSelectedItem();
+                playbackQueueController.enqueueAudioFile(rowData);
+                
+                play();
+            }
+
+           if (listView.getSelectionModel().getSelectedIndex() > -1) {
+                if (mediaPlaybackController.isPlaybackActive()) {
+                    mediaPlaybackController.stopAudioPlayback();
+                }
+                mediaPlaybackController.setPlaybackIndex(listView.getSelectionModel().getSelectedIndex());
+                play();
+            }
         });
         
         plContext.setPlaybackList(playbackQueueController.getPlaybackList());
+
         listView.setContextMenu(plContext);
+
         listView.setOnMouseClicked((MouseEvent mouseEvent) -> {
+            if(mouseEvent.getClickCount() == 2 && mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+
+                if (mediaPlaybackController.isPlaybackActive()) {
+                    mediaPlaybackController.stopAudioPlayback();
+                }
+
+                mediaPlaybackController.setPlaybackIndex(listView.getSelectionModel().getSelectedIndex());
+                //nnmpprototype1.AudioFile rowData = listView.getSelectionModel().getSelectedItem();
+
+                play();
+            }
             if (mouseEvent.getClickCount() == 1) {
                 audioTable.getSelectionModel().clearSelection();
             }
@@ -357,5 +381,6 @@ public class FXMLDocumentController implements Initializable {
         ivAlbumArtPlaying.setImage(getAlbumArt(playbackQueueController.getPlaybackList().getFileAt(mediaPlaybackController.getDataIndex()).getLocation()));
         lblTotalDuration.setText(playbackQueueController.getPlaybackList().getFileAt(mediaPlaybackController.getDataIndex()).getTime());
    }
-   
+
+
 }
