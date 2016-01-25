@@ -266,28 +266,28 @@ public class FXMLDocumentController implements Initializable {
         }
         return null;
     }
-    
-private void openImportDialog() {
-	DirectoryChooser dir = new DirectoryChooser();
-	dir.setTitle("Import a Library...");
 
-	File path = dir.showDialog(null);
+    private void openImportDialog() {
+        DirectoryChooser dir = new DirectoryChooser();
+        dir.setTitle("Import a Library...");
 
-	ImportLibraryController importLibraryController = new ImportLibraryController();
-	Platform.runLater(() -> {
-		importLibraryController.importMusic(path, db);
-		new Thread(() -> {
-			while (importLibraryController.getArtistList() == null) {
+        File path = dir.showDialog(null);
 
-			}
-			artistList = importLibraryController.getArtistList();
-			Platform.runLater(() -> {addItemsToTree();});
+        ImportLibraryController importLibraryController = new ImportLibraryController();
+        Platform.runLater(() -> {
+            importLibraryController.importMusic(path, db);
+            new Thread(() -> {
+                while (importLibraryController.isProcessingComplete() == false) {
 
-		}).start();
+                }
+                artistList = importLibraryController.getArtistList();
+                Platform.runLater(() -> {addItemsToTree();});
 
-	});
+            }).start();
 
-}
+        });
+
+    }
     
     private void addItemsToTree() {
         

@@ -7,17 +7,13 @@ package nnmpprototype1;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.Provider.Service;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
@@ -26,15 +22,14 @@ import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
-
-import static java.lang.Thread.*;
+import org.omg.SendingContext.RunTime;
 
 /**
  *
  * @author zmmetiva
  */
 public class FileSystemUtils {
-    
+
     final private String[] EXTENTIONS = {"mp3", "wma", "ogg", "aac", "mp4", "wav"};
     private ExecutorService threads = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     public Vector<Tag> tags = new Vector<>();
@@ -43,19 +38,20 @@ public class FileSystemUtils {
     public List<Integer> artistList;
 
     public FXMLImportProgressController prgDialog = new FXMLImportProgressController();
+    private AtomicBoolean processingCompleted = new AtomicBoolean(false);
     /**
      * Populates all songs from the directory name into the database
-     * 
+     *
      * @param directoryName
      * @param ext
-     * @param db 
+     * @param db
      */
     private void getFiles(String directoryName, String ext, NNMPDB db) {
         File directory = new File(directoryName);
         Vector<File> fileList = new Vector(Arrays.asList(directory.listFiles()));
 
 
-        /*Future fun = threads.submit(()-> {*/
+        Future fun = threads.submit(()-> {
             for (File file : fileList) {
                 if (file.isFile() && file.getName().endsWith(ext)) {
                     try {
@@ -66,7 +62,7 @@ public class FileSystemUtils {
                         if (tag != null) {
 
                             //int artist = db.addArtist(tag.getFirst(FieldKey.ARTIST));
-                           // int album = db.addAlbum(tag.getFirst(FieldKey.ALBUM), artist);
+                            // int album = db.addAlbum(tag.getFirst(FieldKey.ALBUM), artist);
                             tags.add(tag);
                             paths.add(file.getAbsolutePath());
                             lengths.add(f.getAudioHeader().getTrackLength());
@@ -77,6 +73,8 @@ public class FileSystemUtils {
                             }
                             //Platform.runLater(() -> {prgDialog.setLabel("Reading: " + tag.getFirst(FieldKey.TITLE));});
                             prgDialog.setLabel("Reading: " + tag.getFirst(FieldKey.TITLE));
+                            //progress.set((float)prgDialog.getProgress() - (float)1/tags.size());
+                            //prgDialog.setProgress(progress.get());
                         }
 
 
@@ -88,18 +86,17 @@ public class FileSystemUtils {
                     getFiles(file.getAbsolutePath(), ext, db);
                 }
             }
-        //});
+        });
 
     }
     private void addItemsToDB(NNMPDB db){
-        System.out.println("SUCK MY DICK!");
+        System.out.println("HERE!!!");
         for (int i = 0; i < tags.size(); ++i) {
 
             Tag tag = tags.get(i);
 
             prgDialog.setLabel("Adding: " + tag.getFirst(FieldKey.TITLE));
-            prgDialog.setProgress((float)prgDialog.getProgress() + (float)1/tags.size());
-            System.out.println((prgDialog.getProgress()));
+            prgDialog.setProgress((float)-1);
 
             int artist = db.addArtist(tags.get(i).getFirst(FieldKey.ARTIST));
             int album = db.addAlbum(tags.get(i).getFirst(FieldKey.ALBUM), artist);
@@ -109,9 +106,13 @@ public class FileSystemUtils {
             }
 
         }
+
+        threads.shutdownNow();
+
         artistList = db.getAllArtists();
         System.out.println("DONE!");
-        threads.shutdownNow();
+        processingCompleted.set(true);
+
     }
     /**
      *
@@ -128,30 +129,34 @@ public class FileSystemUtils {
                 getFiles(path, EXTENTIONS[i], db);
             }
         });
-        
+
         try {
 
             t.start();
 
-            t.sleep(500);
+            t.sleep(1000);
 
 
             while(t.isAlive()) {
 
             }
-            
+
             new Thread(() -> {
                 addItemsToDB(db);
                 //artistList = db.getAllArtists();
                 prgDialog.closeDialog();
 
             }).start();
-            
+
 
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
+    }
+
+    public boolean isComplete() {
+        return processingCompleted.get();
     }
 
     public List<Integer> getArtistList() {
