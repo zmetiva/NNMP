@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.jaudiotagger.audio.AudioFile;
@@ -36,7 +37,6 @@ public class FileSystemUtils {
     public Vector<String> paths = new Vector<>();
     public Vector<Integer> lengths = new Vector<>();
     public List<Integer> artistList;
-
     public FXMLImportProgressController prgDialog = new FXMLImportProgressController();
     private AtomicBoolean processingCompleted = new AtomicBoolean(false);
     /**
@@ -50,7 +50,6 @@ public class FileSystemUtils {
         File directory = new File(directoryName);
         Vector<File> fileList = new Vector(Arrays.asList(directory.listFiles()));
 
-
         Future fun = threads.submit(()-> {
             for (File file : fileList) {
                 if (file.isFile() && file.getName().endsWith(ext)) {
@@ -60,7 +59,6 @@ public class FileSystemUtils {
                         Tag tag = f.getTag();
 
                         if (tag != null) {
-
                             //int artist = db.addArtist(tag.getFirst(FieldKey.ARTIST));
                             // int album = db.addAlbum(tag.getFirst(FieldKey.ALBUM), artist);
                             tags.add(tag);
@@ -73,8 +71,6 @@ public class FileSystemUtils {
                             }
                             //Platform.runLater(() -> {prgDialog.setLabel("Reading: " + tag.getFirst(FieldKey.TITLE));});
                             prgDialog.setLabel("Reading: " + tag.getFirst(FieldKey.TITLE));
-                            //progress.set((float)prgDialog.getProgress() - (float)1/tags.size());
-                            //prgDialog.setProgress(progress.get());
                         }
 
 
@@ -96,7 +92,6 @@ public class FileSystemUtils {
             Tag tag = tags.get(i);
 
             prgDialog.setLabel("Adding: " + tag.getFirst(FieldKey.TITLE));
-            prgDialog.setProgress((float)-1);
 
             int artist = db.addArtist(tags.get(i).getFirst(FieldKey.ARTIST));
             int album = db.addAlbum(tags.get(i).getFirst(FieldKey.ALBUM), artist);
@@ -136,7 +131,6 @@ public class FileSystemUtils {
 
             t.sleep(1000);
 
-
             while(t.isAlive()) {
 
             }
@@ -145,7 +139,11 @@ public class FileSystemUtils {
                 addItemsToDB(db);
                 //artistList = db.getAllArtists();
                 prgDialog.closeDialog();
-
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }).start();
 
 

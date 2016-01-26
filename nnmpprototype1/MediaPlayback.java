@@ -195,7 +195,7 @@ public class MediaPlayback {
                     if (!this.isInterrupted()) {
                         changeData = true;
                         try {
-                            Thread.sleep(10);
+                            Thread.sleep(5);
                         } catch (InterruptedException ex) {
 
                         }

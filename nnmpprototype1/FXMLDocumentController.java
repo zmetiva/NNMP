@@ -247,7 +247,7 @@ public class FXMLDocumentController implements Initializable {
         sldVolume.setMax(6);
         sldVolume.setMin(-80);
         sldVolume.setValue(-37);
-        sldVolume.setBlockIncrement(1);
+        sldVolume.setBlockIncrement(.25);
         sldVolume.valueProperty().addListener((ObservableValue<? extends Number> ov, Number oldVal, Number newVal) -> {
             mediaPlaybackController.setPlaybackVolume(newVal.floatValue());
         });
@@ -360,7 +360,7 @@ public class FXMLDocumentController implements Initializable {
                     while (mediaPlaybackController.isPlaybackActive()) {
                         if (mediaPlaybackController.getSongChange()) {
                             try {
-                                Thread.sleep(10);
+                                Thread.sleep(5);
                             } catch (InterruptedException ex) {
                                 Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
                             }

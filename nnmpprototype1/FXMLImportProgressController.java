@@ -40,7 +40,7 @@ public class FXMLImportProgressController implements Initializable {
         try
         {
             stage.setScene(new Scene((Parent) fxmlLoader.load()));
-            prgBar.setProgress(0);
+            prgBar.setProgress(-1);
             
         }
         catch (IOException e)
