@@ -59,6 +59,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML private TableColumn artistCol;
     @FXML private TableColumn albumCol;
     @FXML private TableColumn timeCol;
+    @FXML private Button btnPause;
     @FXML private Button btnPlay;
     @FXML private Button btnStop;
     @FXML private Button btnNext;
@@ -81,12 +82,13 @@ public class FXMLDocumentController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+        Image imagePause = new Image(getClass().getResourceAsStream("pause.png"));
         Image imagePlay = new Image(getClass().getResourceAsStream("play.png"));
         Image imageStop = new Image(getClass().getResourceAsStream("stop.png"));
         Image imageNext = new Image(getClass().getResourceAsStream("next.png"));
         Image imagePrev = new Image(getClass().getResourceAsStream("prev.png"));
 
+        btnPause.setGraphic(new ImageView(imagePause));
         btnPlay.setGraphic(new ImageView(imagePlay));
         btnStop.setGraphic(new ImageView(imageStop));
         btnNext.setGraphic(new ImageView(imageNext));
