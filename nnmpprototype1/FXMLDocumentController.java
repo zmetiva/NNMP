@@ -169,7 +169,7 @@ public class FXMLDocumentController implements Initializable {
                 mediaPlaybackController.setPlaybackIndex(0);
                 nnmpprototype1.AudioFile rowData = (nnmpprototype1.AudioFile) audioTable.getSelectionModel().getSelectedItem();
                 playbackQueueController.enqueueAudioFile(rowData);
-                
+
                 play();
             }
 
@@ -235,7 +235,8 @@ public class FXMLDocumentController implements Initializable {
                                             songData.get(2), 
                                             songData.get(3), 
                                             songData.get(4), 
-                                            songData.get(5), 
+                                            songData.get(5),
+                                            songData.get(6),
                                             albumList.get(i)));
                             }
                         }
@@ -321,6 +322,8 @@ public class FXMLDocumentController implements Initializable {
         for (int i = 0; i < artistList.size(); ++i) {
             ArtistTreeItem artists = new ArtistTreeItem(artistList.get(i));
             List<Integer> albumsByArtist = db.getAlbumsByArtist(artistList.get(i));
+
+            //TODO albumsByArtist.sort() :: By Album Title
 
             for (int j = 0; j < albumsByArtist.size(); ++j) {
                 AlbumTreeItem albums = new AlbumTreeItem(albumsByArtist.get(j));

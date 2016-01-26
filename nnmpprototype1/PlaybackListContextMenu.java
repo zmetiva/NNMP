@@ -8,6 +8,7 @@ package nnmpprototype1;
 import javafx.event.ActionEvent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 
 /**
  *
@@ -18,6 +19,11 @@ public class PlaybackListContextMenu extends ContextMenu {
     private final MenuItem moveUp = new MenuItem("Move Up");
     private final MenuItem moveDown = new MenuItem("Move Down");
     private final MenuItem removeFile = new MenuItem("Remove");
+    private final MenuItem editMetadata = new MenuItem("Edit Metadata");
+    private final MenuItem convertAudio = new MenuItem("Convert Audio");
+
+   //FXMLMetadataController metadataDia = new FXMLMetadataController();
+
     private PlaybackList list;
     private int selectedIndex;
     
@@ -26,9 +32,17 @@ public class PlaybackListContextMenu extends ContextMenu {
         this.getItems().add(moveUp);
         this.getItems().add(moveDown);
         this.getItems().add(removeFile);
+        this.getItems().add(new SeparatorMenuItem());
+        this.getItems().add(editMetadata);
+        this.getItems().add(convertAudio);
         
         removeFile.setOnAction((ActionEvent e) -> {
             list.removeFileAt(selectedIndex);
+        });
+
+        editMetadata.setOnAction((ActionEvent e) -> {
+            FXMLMetadataController metadataDia = new FXMLMetadataController(list.getFileAt(selectedIndex));
+            metadataDia.showAndWaitDialog();
         });
     }
     

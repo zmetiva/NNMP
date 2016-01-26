@@ -26,8 +26,8 @@ public class TableContextMenu extends ContextMenu {
     TableContextMenu() {
         super();
         this.getItems().add(addToPlaylist);
-        this.getItems().add(editMetadata);
         this.getItems().add(new SeparatorMenuItem());
+        this.getItems().add(editMetadata);
         this.getItems().add(convertAudio);
         
         addToPlaylist.setOnAction((ActionEvent e) -> {

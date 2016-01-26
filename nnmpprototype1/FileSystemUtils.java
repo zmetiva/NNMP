@@ -102,7 +102,7 @@ public class FileSystemUtils {
             int album = db.addAlbum(tags.get(i).getFirst(FieldKey.ALBUM), artist);
             if (tags.get(i).getFirst(FieldKey.TRACK).equals("")) {
             } else {
-                int song = db.addSong(tags.get(i).getFirst(FieldKey.TRACK), tags.get(i).getFirst(FieldKey.TITLE), lengths.get(i), paths.get(i), album);
+                int song = db.addSong(tags.get(i).getFirst(FieldKey.TRACK), tags.get(i).getFirst(FieldKey.TITLE), tags.get(i).getFirst((FieldKey.YEAR)), lengths.get(i), paths.get(i), album);
             }
 
         }

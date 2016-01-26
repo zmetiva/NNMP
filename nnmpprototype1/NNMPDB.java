@@ -46,6 +46,7 @@ public class NNMPDB {
                     "  song_id integer primary key NOT NULL," +
                     "  song_title text NOT NULL," +
                     "  track integer NOT NULL," +
+                    "  year text, " +
                     "  duration integer NOT NULL," +
                     "  location text NOT NULL," +
                     "  album_id integer NOT NULL," +
@@ -63,13 +64,13 @@ public class NNMPDB {
         }
     }
     
-    public int addSong(String track, String title, int duration, String location, int albumId) {
+    public int addSong(String track, String title, String year, int duration, String location, int albumId) {
         
         boolean exists = this.songExists(title, albumId);
         int index = -1;
         
         if (!exists) {
-            String sql = "INSERT INTO song (song_id, song_title, track, duration, location, album_id) VALUES (NULL, '" + title.replaceAll("'", "''") + "', " + Integer.parseInt(track, 10) + ", " + duration + ", '" + location.replaceAll("'", "''") + "', " + albumId + ");";
+            String sql = "INSERT INTO song (song_id, song_title, track, year, duration, location, album_id) VALUES (NULL, '" + title.replaceAll("'", "''") + "', " + Integer.parseInt(track, 10) + ", '" + year.replaceAll("'", "''") + "', " + duration + ", '" + location.replaceAll("'", "''") + "', " + albumId + ");";
             runQuery(sql);
 
             sql = "SELECT MAX(song_id) FROM song;";
@@ -500,12 +501,12 @@ public class NNMPDB {
         ArrayList<String> info = new ArrayList<>();
         int count = 1;
         
-        String sql = "SELECT s.location, s.duration, art.artist_name, alb.album_name, s.song_title, s.track FROM song s, album alb, artist art WHERE s.song_id = " + songId + " AND s.album_id = alb.album_id AND art.artist_id = alb.artist_id";
+        String sql = "SELECT s.location, s.duration, art.artist_name, alb.album_name, s.song_title, s.track, s.year FROM song s, album alb, artist art WHERE s.song_id = " + songId + " AND s.album_id = alb.album_id AND art.artist_id = alb.artist_id";
         
         ResultSet rs = this.runResultQuery(sql);
         
         try {
-            for (int i = 1; i < 7; ++i) {
+            for (int i = 1; i < 8; ++i) {
                 info.add(rs.getString(i));
             }
         } catch (SQLException ex) {
@@ -517,6 +518,10 @@ public class NNMPDB {
         
         return info;
         
+    }
+
+    public void updateSong() {
+
     }
     
     
