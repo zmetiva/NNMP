@@ -16,7 +16,7 @@ import javafx.scene.control.SeparatorMenuItem;
  * @author tyler
  */
 public class PlaybackListContextMenu extends ContextMenu {
-    
+
     private final MenuItem moveUp = new MenuItem("Move Up");
     private final MenuItem moveDown = new MenuItem("Move Down");
     private final MenuItem removeFile = new MenuItem("Remove");
@@ -47,6 +47,11 @@ public class PlaybackListContextMenu extends ContextMenu {
         editMetadata.setOnAction((ActionEvent e) -> {
             FXMLMetadataController metadataDia = new FXMLMetadataController(list.getFileAt(selectedIndex));
             metadataDia.showAndWaitDialog();
+        });
+
+        convertAudio.setOnAction((ActionEvent e) -> {
+            FXMLConvertController convertController = new FXMLConvertController();
+            convertController.showDialog();
         });
     }
     

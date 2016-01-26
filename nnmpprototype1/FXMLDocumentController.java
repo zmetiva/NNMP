@@ -30,6 +30,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -68,7 +69,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML private MenuItem importLibraryItem = new MenuItem();
     @FXML private MenuItem quitItem = new MenuItem();
     @FXML private Slider sldVolume;
-    
+
     private ObservableList<nnmpprototype1.AudioFile> audioTableList = FXCollections.observableArrayList();
     private List<Integer> artistList = new ArrayList<>();
     private NNMPDB db = new NNMPDB();
@@ -78,10 +79,11 @@ public class FXMLDocumentController implements Initializable {
     private final TableContextMenu tblContext = new TableContextMenu();
     private final PlaybackListContextMenu plContext = new PlaybackListContextMenu();
     
-    private final PlaybackQueueController playbackQueueController = new PlaybackQueueController(); 
-    
+    private final PlaybackQueueController playbackQueueController = new PlaybackQueueController();
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
         Image imagePause = new Image(getClass().getResourceAsStream("pause.png"));
         Image imagePlay = new Image(getClass().getResourceAsStream("play.png"));
         Image imageStop = new Image(getClass().getResourceAsStream("stop.png"));
