@@ -10,6 +10,7 @@ package nnmpprototype1;
  * @author zmmetiva, tmetiva
  */
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -30,6 +31,9 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -140,7 +144,13 @@ public class FXMLDocumentController implements Initializable {
             });
             return row ;
         });
-        
+
+        btnPause.setOnAction((ActionEvent e) -> {
+            if (mediaPlaybackController.isPlaybackActive()) {
+                mediaPlaybackController.pauseAudioPlayback();
+            }
+        });
+
         btnStop.setOnAction((ActionEvent actionEvent) -> {
             if (mediaPlaybackController.isPlaybackActive()) {
                 mediaPlaybackController.stopAudioPlayback();                
@@ -164,25 +174,31 @@ public class FXMLDocumentController implements Initializable {
         });
         
         btnPlay.setOnAction((ActionEvent actionEvent) -> {
-            if(audioTable.getSelectionModel().getSelectedIndex() > -1) {
-                if (mediaPlaybackController.isPlaybackActive()) {
-                    mediaPlaybackController.stopAudioPlayback();
-                }
-
-                playbackQueueController.flush();
-                mediaPlaybackController.setPlaybackIndex(0);
-                nnmpprototype1.AudioFile rowData = (nnmpprototype1.AudioFile) audioTable.getSelectionModel().getSelectedItem();
-                playbackQueueController.enqueueAudioFile(rowData);
-
-                play();
+            if (mediaPlaybackController.getPausedStatus()) {
+                mediaPlaybackController.resumeAudioPlayback();
             }
+            else {
 
-           if (listView.getSelectionModel().getSelectedIndex() > -1) {
-                if (mediaPlaybackController.isPlaybackActive()) {
-                    mediaPlaybackController.stopAudioPlayback();
+                if (audioTable.getSelectionModel().getSelectedIndex() > -1) {
+                    if (mediaPlaybackController.isPlaybackActive()) {
+                        mediaPlaybackController.stopAudioPlayback();
+                    }
+
+                    playbackQueueController.flush();
+                    mediaPlaybackController.setPlaybackIndex(0);
+                    nnmpprototype1.AudioFile rowData = (nnmpprototype1.AudioFile) audioTable.getSelectionModel().getSelectedItem();
+                    playbackQueueController.enqueueAudioFile(rowData);
+
+                    play();
                 }
-                mediaPlaybackController.setPlaybackIndex(listView.getSelectionModel().getSelectedIndex());
-                play();
+
+                if (listView.getSelectionModel().getSelectedIndex() > -1) {
+                    if (mediaPlaybackController.isPlaybackActive()) {
+                        mediaPlaybackController.stopAudioPlayback();
+                    }
+                    mediaPlaybackController.setPlaybackIndex(listView.getSelectionModel().getSelectedIndex());
+                    play();
+                }
             }
         });
         

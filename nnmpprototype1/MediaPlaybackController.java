@@ -35,7 +35,15 @@ public class MediaPlaybackController {
     public void stopAudioPlayback() {
         player.stopAudio();
     }
-    
+
+    public void pauseAudioPlayback() {
+        player.pauseAudio();
+    }
+
+    public void resumeAudioPlayback() {
+        player.resumeAudio();
+    }
+
     public void queueNextAudioFile() {
         player.playNextTrack();
     }
@@ -66,5 +74,9 @@ public class MediaPlaybackController {
     
     public int getDataIndex() {
         return player.getCurrentIndex();
+    }
+
+    public boolean getPausedStatus() {
+        return player.getIsPaused();
     }
 }

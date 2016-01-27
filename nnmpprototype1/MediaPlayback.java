@@ -41,6 +41,8 @@ public class MediaPlayback {
     private PlaybackQueueController pqc;
     private volatile boolean changeData = false;
     private int currentIndex = 0;
+    private volatile boolean isPaused = false;
+    private volatile boolean isDone = false;
     
     public MediaPlayback() {
         
@@ -63,6 +65,7 @@ public class MediaPlayback {
                 while (isPlaying && currentIndex < pqc.getPlaybackList().getSize() && !this.isInterrupted()) {
 
                     changeData = false;
+                    isDone = false;
 
                     //IMediaWriter writer = ToolFactory.makeWriter("test1.wav");
 
@@ -120,11 +123,18 @@ public class MediaPlayback {
                      */
                     IPacket packet = IPacket.make();
 
-                    while (!this.isInterrupted() && container.readNextPacket(packet) >= 0) {
+                    while (!this.isInterrupted() && /*container.readNextPacket(packet) >= 0*/ !isDone) {
                         /*
                          * Now we have a packet, let's see if it belongs to our audio stream
                          */
-                        if (packet.getStreamIndex() == audioStreamId) {
+
+                        if (!isPaused && container.readNextPacket(packet) < 0) {
+                            isDone = true;
+                        }
+
+                        if (!isPaused) {
+
+                            if (packet.getStreamIndex() == audioStreamId) {
                             /*
                              * We allocate a set of samples with the same number of channels as the
                              * coder tells us is in this buffer.
@@ -132,47 +142,48 @@ public class MediaPlayback {
                              * We also pass in a buffer size (1024 in our example), although Xuggler
                              * will probably allocate more space than just the 1024 (it's not important why).
                              */
-                            IAudioSamples samples = IAudioSamples.make(1024, audioCoder.getChannels());
+                                IAudioSamples samples = IAudioSamples.make(1024, audioCoder.getChannels());
 
                             /*
                              * A packet can actually contain multiple sets of samples (or frames of samples
                              * in audio-decoding speak).  So, we may need to call decode audio multiple
                              * times at different offsets in the packet's data.  We capture that here.
                              */
-                            int offset = 0;
+                                int offset = 0;
 
                             /*
                              * Keep going until we've processed all data
                              */
 
-                            while (!this.isInterrupted() && offset < packet.getSize()) {
-                                int bytesDecoded = audioCoder.decodeAudio(samples, packet, offset);
-                                if (bytesDecoded < 0) {
-                                    //throw new RuntimeException("got error decoding audio in: " + filename);
-                                    break;
-                                }
-                                offset += bytesDecoded;
+                                while (!this.isInterrupted() && offset < packet.getSize()) {
+                                    int bytesDecoded = audioCoder.decodeAudio(samples, packet, offset);
+                                    if (bytesDecoded < 0) {
+                                        //throw new RuntimeException("got error decoding audio in: " + filename);
+                                        break;
+                                    }
+                                    offset += bytesDecoded;
                                 /*
                                  * Some decoder will consume data in a packet, but will not be able to construct
                                  * a full set of samples yet.  Therefore you should always check if you
                                  * got a complete set of samples from the decoder
                                  */
-                                if (samples.isComplete() && !this.isInterrupted()) {
-                                    //playJavaSound(samples);
-                                    try {
-                                        //writer.encodeAudio(0, samples);
-                                        playJavaSound(samples, mLine);
-                                    } catch (Exception e) {
-                                        System.out.println(e);
+                                    if (samples.isComplete() && !this.isInterrupted()) {
+                                        //playJavaSound(samples);
+                                        try {
+                                            //writer.encodeAudio(0, samples);
+                                            playJavaSound(samples, mLine);
+                                        } catch (Exception e) {
+                                            System.out.println(e);
+                                        }
                                     }
                                 }
-                            }
-                        } else {
+                            } else {
                             /*
                              * This packet isn't part of our audio stream, so we just silently drop it.
                              */
-                            do {
-                            } while (false);
+                                do {
+                                } while (false);
+                            }
                         }
                     }
                     /*
@@ -209,13 +220,26 @@ public class MediaPlayback {
         t.start();
         refThread = t;
     }
-    
+
+    public void pauseAudio() {
+        isPaused = true;
+        curLine.stop();
+    }
+
+    public void resumeAudio() {
+        if (isPaused) {
+            curLine.start();
+            isPaused = false;
+        }
+    }
+
     public void stopAudio() {
         curLine.stop();
         curLine.flush();
         curLine.close();
         refThread.interrupt();
         isPlaying = false;
+        isPaused = false;
         curLine = null;
     }
 
@@ -356,5 +380,9 @@ public class MediaPlayback {
     
     public int getCurrentIndex() {
         return currentIndex;
+    }
+
+    public boolean getIsPaused() {
+        return isPaused;
     }
 }
