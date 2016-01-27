@@ -13,14 +13,14 @@
    <top>
       <BorderPane prefHeight="61.0" prefWidth="912.0" BorderPane.alignment="CENTER">
          <right>
-            <HBox alignment="CENTER_RIGHT" prefHeight="64.0" prefWidth="250.0" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER_RIGHT" prefHeight="64.0" prefWidth="250.0" stylesheets="@../nnmp.css" BorderPane.alignment="CENTER">
                <children>
                         <Button fx:id="btnPause" alignment="CENTER" mnemonicParsing="false">
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>
                            <HBox.margin>
-                              <Insets left="5.0" right="5.0" />
+                              <Insets left="5.0" />
                            </HBox.margin>
                         </Button>
                   <Button fx:id="btnPlay" alignment="CENTER" mnemonicParsing="false">
@@ -28,22 +28,22 @@
                         <Insets />
                      </opaqueInsets>
                      <HBox.margin>
-                        <Insets left="5.0" right="5.0" />
+                        <Insets />
                      </HBox.margin>
                   </Button>
                   <Button fx:id="btnStop" mnemonicParsing="false">
                      <HBox.margin>
-                        <Insets left="5.0" right="5.0" />
+                        <Insets />
                      </HBox.margin>
                   </Button>
                   <Button fx:id="btnPrev" mnemonicParsing="false">
                      <HBox.margin>
-                        <Insets left="5.0" right="5.0" />
+                        <Insets />
                      </HBox.margin>
                   </Button>
                   <Button fx:id="btnNext" mnemonicParsing="false">
                      <HBox.margin>
-                        <Insets left="5.0" right="5.0" />
+                        <Insets right="5.0" />
                      </HBox.margin>
                   </Button>
                   <Slider fx:id="sldVolume" orientation="VERTICAL">

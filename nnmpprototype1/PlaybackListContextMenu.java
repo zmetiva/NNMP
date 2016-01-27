@@ -44,6 +44,10 @@ public class PlaybackListContextMenu extends ContextMenu {
             list.removeFileAt(selectedIndex);
         });
 
+        clearQueue.setOnAction((ActionEvent e) -> {
+            list.flush();
+        });
+
         editMetadata.setOnAction((ActionEvent e) -> {
             FXMLMetadataController metadataDia = new FXMLMetadataController(list.getFileAt(selectedIndex));
             metadataDia.showAndWaitDialog();

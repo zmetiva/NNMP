@@ -30,6 +30,8 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.*;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -267,7 +269,7 @@ public class FXMLDocumentController implements Initializable {
         sldVolume.setMax(6);
         sldVolume.setMin(-80);
         sldVolume.setValue(-37);
-        sldVolume.setBlockIncrement(.25);
+        sldVolume.setBlockIncrement(.10);
         sldVolume.valueProperty().addListener((ObservableValue<? extends Number> ov, Number oldVal, Number newVal) -> {
             mediaPlaybackController.setPlaybackVolume(newVal.floatValue());
         });

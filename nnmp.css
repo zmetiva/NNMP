@@ -1,0 +1,8 @@
+.button{
+	-fx-background-color: transparent;
+}
+
+.button:hover{
+	-fx-background-color: linear-gradient(#D9D9D9, #D9D9D9);
+	-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}

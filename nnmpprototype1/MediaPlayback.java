@@ -33,7 +33,7 @@ public class MediaPlayback {
      * The audio line we'll output sound to; it'll be the default audio device on your system if available
      */
     
-    private static SourceDataLine curLine;
+    private static SourceDataLine curLine = null;
     private volatile boolean isPlaying = false; 
     private Thread refThread;
     private FloatControl volume;
@@ -222,8 +222,12 @@ public class MediaPlayback {
     }
 
     public void pauseAudio() {
-        isPaused = true;
-        curLine.stop();
+        if (isPlaying) {
+            isPaused = true;
+            if (curLine != null) {
+                curLine.stop();
+            }
+        }
     }
 
     public void resumeAudio() {
