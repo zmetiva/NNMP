@@ -15,6 +15,11 @@
          <right>
             <HBox alignment="CENTER_RIGHT" prefHeight="64.0" prefWidth="250.0" stylesheets="@../nnmp.css" BorderPane.alignment="CENTER">
                <children>
+                  <Button fx:id="btnPrev" mnemonicParsing="false">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Button>
                         <Button fx:id="btnPause" alignment="CENTER" mnemonicParsing="false">
                            <opaqueInsets>
                               <Insets />
@@ -32,11 +37,6 @@
                      </HBox.margin>
                   </Button>
                   <Button fx:id="btnStop" mnemonicParsing="false">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </Button>
-                  <Button fx:id="btnPrev" mnemonicParsing="false">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
@@ -94,14 +94,14 @@
          <center>
             <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <center>
-                  <Slider BorderPane.alignment="CENTER" />
+                  <Slider fx:id="sldSeekBar" BorderPane.alignment="CENTER" />
                </center>
                <top>
                   <HBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
                      <children>
                         <HBox HBox.hgrow="ALWAYS">
                            <children>
-                              <Label text="0:00" />
+                              <Label fx:id="lblElapsedTime" text="0:00" />
                            </children>
                         </HBox>
                         <HBox alignment="TOP_RIGHT">

@@ -94,7 +94,7 @@ public class AudioFile extends MediaFile {
     }
 
     public String getYear() { return year; }
-    
+
     public String getTime() {
         int hour = Math.floorDiv(duration, 3600);
         int min = (duration / 60) % 60;

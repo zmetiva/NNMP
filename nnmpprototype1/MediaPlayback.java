@@ -186,6 +186,7 @@ public class MediaPlayback {
                             }
                         }
                     }
+
                     /*
                      * Technically since we're exiting anyway, these will be cleaned up by 
                      * the garbage collector... but we're going to show how to clean up.
@@ -204,6 +205,7 @@ public class MediaPlayback {
                     System.out.println("DONE!");
                     
                     if (!this.isInterrupted()) {
+
                         changeData = true;
                         try {
                             Thread.sleep(5);
@@ -238,19 +240,21 @@ public class MediaPlayback {
     }
 
     public void stopAudio() {
-        curLine.stop();
-        curLine.flush();
-        curLine.close();
-        refThread.interrupt();
-        isPlaying = false;
-        isPaused = false;
-        curLine = null;
+        if (curLine != null) {
+            isPlaying = false;
+            //curLine.stop();
+            //curLine.flush();
+            curLine.close();
+            refThread.interrupt();
+            isPaused = false;
+            curLine = null;
+        }
     }
 
     public void playNextTrack() {
         if (currentIndex < pqc.getPlaybackList().getSize() - 1) {
-            curLine.stop();
-            curLine.flush();
+            //curLine.stop();
+            //curLine.flush();
             curLine.close();
             refThread.interrupt();
             isPlaying = false;
@@ -260,8 +264,8 @@ public class MediaPlayback {
     
     public void playPreviousTrack() {
         if (currentIndex > 0) {
-            curLine.stop();
-            curLine.flush();
+            //curLine.stop();
+            //curLine.flush();
             curLine.close();
             refThread.interrupt();
             isPlaying = false;
@@ -389,4 +393,5 @@ public class MediaPlayback {
     public boolean getIsPaused() {
         return isPaused;
     }
+
 }
