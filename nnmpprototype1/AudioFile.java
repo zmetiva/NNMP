@@ -72,7 +72,9 @@ public class AudioFile extends MediaFile {
         this.songId = songId;
         
     }
-    
+
+    public int getDuration() { return duration; }
+
     public String getArtist() {
         return artist;
     }
