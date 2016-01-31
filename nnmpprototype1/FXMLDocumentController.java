@@ -79,7 +79,6 @@ public class FXMLDocumentController implements Initializable {
 
     private Timer timer;
     private int seekTime = 0;
-    private int seekOffset = 0;
     private Boolean isSeeking = false;
     private StringBuilder sb = new StringBuilder();
     
@@ -286,15 +285,20 @@ public class FXMLDocumentController implements Initializable {
         sldSeekBar.setBlockIncrement(1);
 
         sldSeekBar.setOnMousePressed((MouseEvent event) -> {
-            isSeeking = true;
+            if (mediaPlaybackController.isPlaybackActive()) {
+                isSeeking = true;
+            }
         });
 
         sldSeekBar.setOnMouseReleased((MouseEvent event) -> {
-            seekTime = (int) sldSeekBar.getValue();
-            mediaPlaybackController.seekAudio(seekTime);
-            isSeeking = false;
-            startSeekSlider(seekTime);
-            listenForNextItem();
+            if (mediaPlaybackController.isPlaybackActive()) {
+
+                seekTime = (int) sldSeekBar.getValue();
+                mediaPlaybackController.seekAudio(seekTime);
+                isSeeking = false;
+                startSeekSlider(seekTime);
+                listenForNextItem();
+            }
         });
 
         /*

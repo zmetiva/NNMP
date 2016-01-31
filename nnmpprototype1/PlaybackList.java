@@ -51,6 +51,12 @@ public class PlaybackList {
     public int getSize() {
         return playQueue.size();
     }
+
+    public void swap(int x, int y) {
+        nnmpprototype1.AudioFile temp = playQueue.get(x);
+        playQueue.set(x, playQueue.get(y));
+        playQueue.set(y, temp);
+    }
     
     public void flush() {
         playQueue.clear();

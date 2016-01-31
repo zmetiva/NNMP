@@ -85,6 +85,7 @@ public class PlaybackListContextMenu extends ContextMenu {
                 list.enqueueFile(generator.get(i));
             }
         });
+
         savePlaylist.setOnAction((ActionEvent e) -> {
             FileChooser saveDialog = new FileChooser();
             saveDialog.getExtensionFilters().add(
@@ -94,6 +95,18 @@ public class PlaybackListContextMenu extends ContextMenu {
 
             generator.generate(playlistFile.getAbsolutePath());
 
+        });
+
+        moveUp.setOnAction((ActionEvent e) -> {
+            if (!list.empty() && selectedIndex != 0) {
+                list.swap(selectedIndex, selectedIndex - 1);
+            }
+        });
+
+        moveDown.setOnAction((ActionEvent e) -> {
+            if (!list.empty() && selectedIndex != list.getSize() - 1) {
+                list.swap(selectedIndex, selectedIndex + 1);
+            }
         });
     }
     
