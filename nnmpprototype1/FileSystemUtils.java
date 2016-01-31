@@ -31,9 +31,13 @@ public class FileSystemUtils {
     Collection<Callable<nnmpprototype1.AudioFile>> tasks = new ArrayList<Callable<nnmpprototype1.AudioFile>>();
 
     public Vector<Tag> tags = new Vector<>();
+    public Vector<AudioFile> unknowns = new Vector<>();
+
     public Vector<String> paths = new Vector<>();
     public Vector<Integer> lengths = new Vector<>();
     public List<Integer> artistList;
+    public List<Integer> unknownList;
+
     public FXMLImportProgressController prgDialog = new FXMLImportProgressController();
     private AtomicBoolean processingCompleted = new AtomicBoolean(false);
     /**
@@ -59,17 +63,26 @@ public class FileSystemUtils {
                         if (tag != null) {
                             //int artist = db.addArtist(tag.getFirst(FieldKey.ARTIST));
                             // int album = db.addAlbum(tag.getFirst(FieldKey.ALBUM), artist);
-                            tags.add(tag);
-                            paths.add(file.getAbsolutePath());
-                            lengths.add(f.getAudioHeader().getTrackLength());
-
-                            if (tag.getFirst(FieldKey.TRACK).equals("")) {
-                            } else {
-                                //int song = db.addSong(tag.getFirst(FieldKey.TRACK), tag.getFirst(FieldKey.TITLE), f.getAudioHeader().getTrackLength(), file.getAbsolutePath(), album);
+                            if (tag.getFirst(FieldKey.ARTIST).equals("") || tag.getFirst(FieldKey.TITLE).equals("") || tag.getFirst(FieldKey.ARTIST).equals("") || tag.getFirst(FieldKey.TRACK).equals("")) {
+                                unknowns.add(f);
                             }
-                            //Platform.runLater(() -> {prgDialog.setLabel("Reading: " + tag.getFirst(FieldKey.TITLE));});
-                            prgDialog.setLabel("Reading: " + tag.getFirst(FieldKey.TITLE));
-                            //prgDialog.setProgress((float)-1);
+                            else {
+                                tags.add(tag);
+                                paths.add(file.getAbsolutePath());
+                                lengths.add(f.getAudioHeader().getTrackLength());
+
+                                if (tag.getFirst(FieldKey.TRACK).equals("")) {
+                                } else {
+                                    //int song = db.addSong(tag.getFirst(FieldKey.TRACK), tag.getFirst(FieldKey.TITLE), f.getAudioHeader().getTrackLength(), file.getAbsolutePath(), album);
+                                }
+                                //Platform.runLater(() -> {prgDialog.setLabel("Reading: " + tag.getFirst(FieldKey.TITLE));});
+                                prgDialog.setLabel("Reading: " + tag.getFirst(FieldKey.TITLE));
+                                //prgDialog.setProgress((float)-1);
+                            }
+                        }
+
+                        else {
+                            unknowns.add(f);
                         }
 
 
@@ -107,6 +120,18 @@ public class FileSystemUtils {
 
         }
 
+        prgDialog.setProgress((float)0);
+
+        for (int i = 0; i < unknowns.size(); i++) {
+            AudioFile file = unknowns.get(i);
+
+            prgDialog.setLabel("Adding: " + file.getFile().getName());
+            prgDialog.setProgress((float)prgDialog.getProgress() + (float)1/unknowns.size());
+
+            int unknownEntry = db.addUnknown(file.getFile().getName(), file.getFile().getAbsolutePath(), file.getAudioHeader().getTrackLength());
+
+        }
+
         threads.shutdownNow();
 
         tags.clear();
@@ -114,6 +139,8 @@ public class FileSystemUtils {
         paths.clear();
 
         artistList = db.getAllArtists();
+        unknownList = db.getAllUnknown();
+
         System.out.println("DONE!");
         processingCompleted.set(true);
 
@@ -175,5 +202,8 @@ public class FileSystemUtils {
 
     public List<Integer> getArtistList() {
         return artistList;
+    }
+    public List<Integer> getUnknownList() {
+        return unknownList;
     }
 }

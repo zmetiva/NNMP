@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -33,8 +34,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javax.imageio.ImageIO;
+
+import javafx.scene.layout.AnchorPane;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
@@ -67,13 +71,21 @@ public class FXMLDocumentController implements Initializable {
     @FXML private Button btnNext;
     @FXML private Button btnPrev;
     @FXML private ListView<nnmpprototype1.AudioFile> listView;
-    @FXML private MenuItem importLibraryItem = new MenuItem();
-    @FXML private MenuItem quitItem = new MenuItem();
+
+    @FXML private MenuItem importLibraryItem;
+    @FXML private MenuItem quitItem;
+    @FXML private MenuItem openPlaylist;
+    @FXML private MenuItem savePlaylist;
+
     @FXML private Slider sldVolume;
     @FXML private Slider sldSeekBar;
+    @FXML private AnchorPane anchorImage;
+    @FXML private SplitPane leftPane;
 
     private ObservableList<nnmpprototype1.AudioFile> audioTableList = FXCollections.observableArrayList();
     private List<Integer> artistList = new ArrayList<>();
+    private List<Integer> unknownList = new ArrayList<>();
+
     private NNMPDB db = new NNMPDB();
     private final MediaPlaybackController mediaPlaybackController = new MediaPlaybackController();
 
@@ -113,6 +125,10 @@ public class FXMLDocumentController implements Initializable {
         listView.setItems(playbackQueueController.getObsPlaybackList());
 
         audioTable.setItems(audioTableList);
+
+
+       // ivAlbumArtPlaying.fitWidthProperty().bind(anchorImage.widthProperty());
+        //ivAlbumArtPlaying.fitHeightProperty().bind(anchorImage.heightProperty());
         
         audioTable.setRowFactory( tv -> {
             
@@ -239,6 +255,7 @@ public class FXMLDocumentController implements Initializable {
         File fileDatabase = new File("nnmpdb.db");
         if (fileDatabase.exists()) {
             artistList = db.getAllArtists();
+            unknownList = db.getAllUnknown();
             addItemsToTree();
         }
         
@@ -268,6 +285,29 @@ public class FXMLDocumentController implements Initializable {
                                             songData.get(5),
                                             songData.get(6),
                                             albumList.get(i)));
+                        }
+                    }
+                }
+
+                if (item.getClass().equals(UnknownTreeItem.class)) {
+                    if (mouseEvent.getClickCount() == 1) {
+                        System.out.print("Funtimes\n");
+
+                        UnknownTreeItem albumItem = (UnknownTreeItem) item;
+                       // List<Integer> albumList = db.getSongsByAlbum(albumItem.getId());
+                        audioTableList.clear();
+
+                        for (int i = 0; i < unknownList.size(); ++i) {
+                            List<String> unknownData = db.getUnknownData(unknownList.get(i));
+                            audioTableList.add(
+                                    new nnmpprototype1.AudioFile(unknownData.get(1),
+                                            Integer.parseInt(unknownData.get(2)),
+                                            "",
+                                            "",
+                                            unknownData.get(0),
+                                            "",
+                                            "",
+                                            0));
                         }
                     }
                 }
@@ -307,6 +347,19 @@ public class FXMLDocumentController implements Initializable {
                 seekTime = newVal.intValue();
             }
         }); */
+
+        openPlaylist.setOnAction((ActionEvent t) ->{
+            M3UPlaylistController playlistController = new M3UPlaylistController();
+            playlistController.openPlaylist(playbackQueueController.getPlaybackList());
+            playlistController = null;
+
+        });
+
+        savePlaylist.setOnAction((ActionEvent t) -> {
+            M3UPlaylistController playlistController = new M3UPlaylistController();
+            playlistController.savePlaylist(playbackQueueController.getPlaybackList());
+            playlistController = null;
+        });
 
         importLibraryItem.setOnAction((ActionEvent t) -> {
             openImportDialog();
@@ -361,6 +414,8 @@ public class FXMLDocumentController implements Initializable {
 
                 }
                 artistList = importLibraryController.getArtistList();
+                unknownList = importLibraryController.getUnknownList();
+
                 Platform.runLater(() -> {addItemsToTree();});
 
             }).start();
@@ -370,7 +425,8 @@ public class FXMLDocumentController implements Initializable {
     private void addItemsToTree() {
         
         TreeItem<String> rootItem = new TreeItem("My Music", null);
-        TreeItem<String> unknownItems = new TreeItem("Unknown Artist", null);
+        TreeItem<String> unknownItems = new TreeItem("(Unknown Entries)", null);
+        UnknownTreeItem unknownAlbum = new UnknownTreeItem("(Unknown Album)");
 
         for (int i = 0; i < artistList.size(); ++i) {
             ArtistTreeItem artists = new ArtistTreeItem(artistList.get(i));
@@ -384,8 +440,13 @@ public class FXMLDocumentController implements Initializable {
             }
             rootItem.getChildren().add(artists);
         }
-        
+        System.out.println(unknownList.size());
+
+        unknownItems.getChildren().add(unknownAlbum);
+
+        rootItem.getChildren().add(unknownItems);
         rootItem.setExpanded(true);
+
         musicTree.setRoot(rootItem);
     }
     

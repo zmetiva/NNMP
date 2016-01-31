@@ -51,6 +51,12 @@ public class NNMPDB {
                     "  location text NOT NULL," +
                     "  album_id integer NOT NULL," +
                     "  FOREIGN KEY (album_id) REFERENCES album (album_id)" +
+                    ");" +
+                    "CREATE TABLE IF NOT EXISTS unknown(" +
+                    "  unknown_id integer primary key NOT NULL," +
+                    "  unknown_title text NOT NULL," +
+                    "  duration integer NOT NULL," +
+                    "  location text NOT NULL" +
                     ");";
 
             stmt.executeUpdate(sql);
@@ -182,7 +188,30 @@ public class NNMPDB {
         
         return index;
     }
-    
+
+    public int addUnknown(String title, String location, int duration) {
+
+        int index = 0;
+
+        String sql = "INSERT INTO unknown (unknown_id, unknown_title, location, duration) VALUES (NULL, '" + title.replaceAll("'", "''") + "', '" + location.replaceAll("'","''") + "', " + duration + ");";
+        runQuery(sql);
+
+        sql = "SELECT MAX(unknown_id) FROM unknown;";
+
+        ResultSet rs = this.runResultQuery(sql);
+
+        try {
+            index = rs.getInt(1);
+        } catch (SQLException ex) {
+            Logger.getLogger(NNMPDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        clean();
+
+
+        return index;
+    }
+
     public boolean deleteSong(int id) {
         String sql = "DELETE FROM song WHERE song_id = " + id;
         
@@ -335,7 +364,24 @@ public class NNMPDB {
         
         return loc;
     }
-    
+
+    public String getUnknownTitle(int id) {
+        String sql = "SELECT unknown_title FROM unknown WHERE unknown_id = " + id;
+        String loc = null;
+
+        ResultSet rs = this.runResultQuery(sql);
+
+        try {
+            loc = rs.getString(1);
+        } catch (SQLException ex) {
+            Logger.getLogger(NNMPDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        clean();
+
+        return loc;
+    }
+
     public int getNumberOfEntries() {
         ResultSet rs = null;
         int count = -1;
@@ -431,6 +477,24 @@ public class NNMPDB {
         
         return ids;
     }
+
+    public List<Integer> getAllUnknown() {
+        String sql = "SELECT unknown_id FROM unknown ORDER BY unknown_title ASC";
+        List<Integer> ids = new ArrayList<>();
+        ResultSet rs = this.runResultQuery(sql);
+
+        try {
+            while (rs.next()) {
+                ids.add(rs.getInt(1));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(NNMPDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        clean();
+
+        return ids;
+    }
     
     public ArrayList<Integer> getSongsByAlbum(int albumId) {
         ArrayList<Integer> ids = new ArrayList<>();
@@ -518,6 +582,27 @@ public class NNMPDB {
         
         return info;
         
+    }
+
+    public List<String> getUnknownData(int unknownId) {
+        ArrayList<String> info = new ArrayList<>();
+
+        String sql = "SELECT unknown_title, location, duration FROM unknown WHERE unknown_id = " + unknownId;
+
+        ResultSet rs = this.runResultQuery(sql);
+
+        try {
+            for (int i = 1; i < 4; ++i) {
+                info.add(rs.getString(i));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(NNMPDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        clean();
+
+
+        return info;
     }
 
     public void updateSong() {

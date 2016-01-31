@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
 <?import java.lang.*?>
@@ -7,7 +8,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="562.0" prefWidth="1002.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nnmpprototype1.FXMLDocumentController">
+<BorderPane prefHeight="685.0" prefWidth="1119.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nnmpprototype1.FXMLDocumentController">
    <center>
 <BorderPane minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
    <top>
@@ -67,16 +68,15 @@
                      <center>
                         <HBox minWidth="250.0" prefHeight="100.0" prefWidth="250.0" BorderPane.alignment="CENTER">
                            <children>
-                        <ImageView fx:id="ivAlbumArtPlaying" fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
-                                 <HBox.margin>
-                                    <Insets right="10.0" />
-                                 </HBox.margin></ImageView>
                         <VBox prefHeight="200.0" prefWidth="500.0">
                            <children>
                               <Label fx:id="lblSongPlaying">
                                  <padding>
                                     <Insets top="10.0" />
                                  </padding>
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
                               </Label>
                               <Label fx:id="lblArtistPlaying" />
                               <Label fx:id="lblAlbumPlaying">
@@ -85,6 +85,9 @@
                                   </padding>
                               </Label>
                            </children>
+                                 <HBox.margin>
+                                    <Insets left="25.0" />
+                                 </HBox.margin>
                         </VBox>
                            </children>
                         </HBox>
@@ -129,10 +132,23 @@
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="414.0" prefWidth="115.0">
                      <children>
-                        <BorderPane layoutX="25.0" layoutY="83.0" prefHeight="414.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <center>
-                              <TreeView fx:id="musicTree" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
-                           </center>
+                        <BorderPane layoutX="25.0" layoutY="83.0" minWidth="300.0" prefHeight="414.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <center>
+                                    <SplitPane fx:id="leftPane" dividerPositions="0.5" minWidth="300.0" orientation="VERTICAL" prefWidth="300.0" BorderPane.alignment="CENTER">
+                                       <items>
+                                          <BorderPane prefHeight="200.0" prefWidth="200.0">
+                                             <center>
+                                                <TreeView fx:id="musicTree" minWidth="300.0" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                                             </center>
+                                          </BorderPane>
+                                          <BorderPane maxHeight="300.0" minHeight="300.0" minWidth="300.0" prefHeight="200.0" prefWidth="200.0">
+                                             <center>
+                                                <ImageView fx:id="ivAlbumArtPlaying" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" BorderPane.alignment="CENTER" />
+                                             </center>
+                                          </BorderPane>
+                                       </items>
+                                    </SplitPane>
+                                 </center>
                         </BorderPane>
                      </children>
                   </AnchorPane>
@@ -188,7 +204,11 @@
             <menus>
               <Menu mnemonicParsing="false" text="File">
                 <items>
+                        <MenuItem fx:id="openPlaylist" mnemonicParsing="false" text="Open Playlist" />
+                        <MenuItem fx:id="savePlaylist" mnemonicParsing="false" text="Save Playlist" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="importLibraryItem" mnemonicParsing="false" text="Import Library" />
+                        <MenuItem mnemonicParsing="false" text="Refresh Lirary" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="quitItem" mnemonicParsing="false" text="Quit" />
                 </items>

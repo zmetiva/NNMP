@@ -71,30 +71,15 @@ public class PlaybackListContextMenu extends ContextMenu {
         });
 
         loadPlaylist.setOnAction((ActionEvent e) -> {
-            FileChooser openDialog = new FileChooser();
-            openDialog.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter("m3u Playlist", "*.m3u"));
-            File playlistFile = openDialog.showOpenDialog(this.getOwnerWindow());
-            M3UPlaylistGenerator generator = new M3UPlaylistGenerator();
-
-            generator.read(playlistFile.getAbsolutePath(), false);
-
-            list.flush();
-
-            for (int i = 0; i < generator.size(); i++) {
-                list.enqueueFile(generator.get(i));
-            }
+            M3UPlaylistController playlistController = new M3UPlaylistController();
+            playlistController.openPlaylist(list);
+            playlistController = null;
         });
 
         savePlaylist.setOnAction((ActionEvent e) -> {
-            FileChooser saveDialog = new FileChooser();
-            saveDialog.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter("m3u Playlist", "*.m3u"));
-            File playlistFile = saveDialog.showSaveDialog(this.getOwnerWindow());
-            M3UPlaylistGenerator generator = new M3UPlaylistGenerator(list.getList());
-
-            generator.generate(playlistFile.getAbsolutePath());
-
+            M3UPlaylistController playlistController = new M3UPlaylistController();
+            playlistController.savePlaylist(list);
+            playlistController = null;
         });
 
         moveUp.setOnAction((ActionEvent e) -> {

@@ -30,11 +30,17 @@ public class ImportLibraryController {
     }
 
     public boolean isProcessingComplete() {
+
         return fileUtils.isComplete();
     }
 
     public List<Integer> getArtistList() {
+
         return fileUtils.getArtistList();
+    }
+
+    public List<Integer> getUnknownList() {
+        return fileUtils.getUnknownList();
     }
 
 }
