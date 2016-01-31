@@ -55,11 +55,7 @@ public class MediaPlaybackController {
     public boolean isPlaybackActive() {
         return player.active();
     }
-    
-    public boolean isLineRunning() {
-        return player.lineRunning();
-    }
-    
+
     public void setPlaybackVolume(float level) {
         player.setVolume(level);
     }
@@ -78,5 +74,9 @@ public class MediaPlaybackController {
 
     public boolean getPausedStatus() {
         return player.getIsPaused();
+    }
+
+    public void seekAudio(int seekVal) {
+        player.seek(seekVal);
     }
 }

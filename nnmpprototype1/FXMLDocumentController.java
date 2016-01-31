@@ -10,7 +10,6 @@ package nnmpprototype1;
  * @author zmmetiva, tmetiva
  */
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -26,16 +25,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.*;
-import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -84,6 +79,8 @@ public class FXMLDocumentController implements Initializable {
 
     private Timer timer;
     private int seekTime = 0;
+    private int seekOffset = 0;
+    private Boolean isSeeking = false;
     private StringBuilder sb = new StringBuilder();
     
     private final TableContextMenu tblContext = new TableContextMenu();
@@ -188,6 +185,8 @@ public class FXMLDocumentController implements Initializable {
         btnPlay.setOnAction((ActionEvent actionEvent) -> {
             if (mediaPlaybackController.getPausedStatus()) {
                 mediaPlaybackController.resumeAudioPlayback();
+                startSeekSlider(seekTime);
+                listenForNextItem();
             }
             else {
 
@@ -283,6 +282,27 @@ public class FXMLDocumentController implements Initializable {
         sldVolume.valueProperty().addListener((ObservableValue<? extends Number> ov, Number oldVal, Number newVal) -> {
             mediaPlaybackController.setPlaybackVolume(newVal.floatValue());
         });
+
+        sldSeekBar.setBlockIncrement(1);
+
+        sldSeekBar.setOnMousePressed((MouseEvent event) -> {
+            isSeeking = true;
+        });
+
+        sldSeekBar.setOnMouseReleased((MouseEvent event) -> {
+            seekTime = (int) sldSeekBar.getValue();
+            mediaPlaybackController.seekAudio(seekTime);
+            isSeeking = false;
+            startSeekSlider(seekTime);
+            listenForNextItem();
+        });
+
+        /*
+        sldSeekBar.valueProperty().addListener((ObservableValue<? extends Number> ov, Number oldVal, Number newVal) -> {
+            if (isSeeking) {
+                seekTime = newVal.intValue();
+            }
+        }); */
 
         importLibraryItem.setOnAction((ActionEvent t) -> {
             openImportDialog();
@@ -383,57 +403,66 @@ public class FXMLDocumentController implements Initializable {
            loadMediaUIData();
 
            if (timer == null) {
-               startSeekSlider();
+               startSeekSlider(0);
            }
            else {
                resetSeekSlider();
            }
 
            mediaPlaybackController.playAudioFile();
-
-           new Thread(() -> {
-               while (mediaPlaybackController.isPlaybackActive()) {
-                   if (mediaPlaybackController.getSongChange()) {
-                       try {
-                           Thread.sleep(5);
-                       } catch (InterruptedException ex) {
-                           Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                       }
-                       Platform.runLater(() -> {
-                           if (mediaPlaybackController.getDataIndex() < playbackQueueController.getPlaybackList().getSize()) {
-                               loadMediaUIData();
-                               //startSeekSlider();
-                               resetSeekSlider();
-                           }
-                       });
-                   }
-               }
-               timer.cancel();
-               timer = null;
-               seekTime = 0;
-               sldSeekBar.setValue(0);
-
-               Platform.runLater(() -> {
-                   lblElapsedTime.setText("0:00");
-               });
-           }).start();
+           listenForNextItem();
        }
     }
 
-    private void startSeekSlider() {
+    private void listenForNextItem() {
+        new Thread(() -> {
+            while (mediaPlaybackController.isPlaybackActive() && !mediaPlaybackController.getPausedStatus()) {
+                if (mediaPlaybackController.getSongChange()) {
+                    try {
+                        Thread.sleep(5);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    Platform.runLater(() -> {
+                        if (mediaPlaybackController.getDataIndex() < playbackQueueController.getPlaybackList().getSize()) {
+                            loadMediaUIData();
 
+                            if (!mediaPlaybackController.getPausedStatus()) {
+                                resetSeekSlider();
+                            }
+                        }
+                    });
+                }
+            }
+            timer.cancel();
+            timer = null;
+
+            if (!mediaPlaybackController.getPausedStatus()) {
+
+                seekTime = 0;
+                sldSeekBar.setValue(0);
+
+                Platform.runLater(() -> {
+                    lblElapsedTime.setText("0:00");
+                });
+            }
+        }).start();
+    }
+
+    private void startSeekSlider(int time) {
 
         final int dur = playbackQueueController.getPlaybackList().getFileAt(mediaPlaybackController.getDataIndex()).getDuration();
 
         sldSeekBar.setMin(0);
         sldSeekBar.setMax(dur);
-        seekTime = 0;
+        sldSeekBar.setValue(seekTime);
+        seekTime = time;
 
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 Platform.runLater(() -> {
-                    if (!mediaPlaybackController.getPausedStatus()) {
+                    if (!mediaPlaybackController.getPausedStatus() && !sldSeekBar.isValueChanging() && !isSeeking) {
                         lblElapsedTime.setText(formatTime(seekTime));
                         sldSeekBar.setValue(seekTime);
                         ++seekTime;

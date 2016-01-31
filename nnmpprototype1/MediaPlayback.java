@@ -7,12 +7,9 @@ package nnmpprototype1;
 
 import com.xuggle.mediatool.MediaToolAdapter;
 import com.xuggle.mediatool.event.IAudioSamplesEvent;
-import com.xuggle.xuggler.IAudioSamples;
-import com.xuggle.xuggler.ICodec;
-import com.xuggle.xuggler.IContainer;
-import com.xuggle.xuggler.IPacket;
-import com.xuggle.xuggler.IStream;
-import com.xuggle.xuggler.IStreamCoder;
+import com.xuggle.xuggler.*;
+import com.xuggle.xuggler.io.IURLProtocolHandler;
+
 import java.nio.ShortBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,14 +31,16 @@ public class MediaPlayback {
      */
     
     private static SourceDataLine curLine = null;
-    private volatile boolean isPlaying = false; 
+    private volatile boolean isPlaying = false;
+    private volatile boolean isPaused = false;
     private Thread refThread;
+    private IContainer refContainer;
+    private volatile int refStreamId;
     private FloatControl volume;
     private float volLevel = -37;
     private PlaybackQueueController pqc;
     private volatile boolean changeData = false;
     private int currentIndex = 0;
-    private volatile boolean isPaused = false;
     private volatile boolean isDone = false;
     
     public MediaPlayback() {
@@ -74,6 +73,7 @@ public class MediaPlayback {
 
                     // Create a Xuggler container object
                     IContainer container = IContainer.make();
+                    refContainer = container;
 
                     // Open up the container
                     if (container.open(filename, IContainer.Type.READ, null) < 0) {
@@ -86,6 +86,7 @@ public class MediaPlayback {
                     // and iterate through the streams to find the first audio stream
                     int audioStreamId = -1;
                     IStreamCoder audioCoder = null;
+
                     for (int i = 0; i < numStreams; i++) {
                         // Find the stream object
                         IStream stream = container.getStream(i);
@@ -95,6 +96,7 @@ public class MediaPlayback {
 
                         if (coder.getCodecType() == ICodec.Type.CODEC_TYPE_AUDIO) {
                             audioStreamId = i;
+                            refStreamId = audioStreamId;
                             audioCoder = coder;
                             break;
                         }
@@ -114,6 +116,7 @@ public class MediaPlayback {
                     /*
                      * And once we have that, we ask the Java Sound System to get itself ready.
                      */
+
                     SourceDataLine mLine = openJavaSound(audioCoder);
 
                     //writer.addAudioStream(0, 0, audioCoder.getChannels(), audioCoder.getSampleRate());
@@ -123,6 +126,7 @@ public class MediaPlayback {
                      */
                     IPacket packet = IPacket.make();
 
+                    //container.seekKeyFrame(refStreamId, 300*1000*1000, IURLProtocolHandler.SEEK_CUR);
                     while (!this.isInterrupted() && /*container.readNextPacket(packet) >= 0*/ !isDone) {
                         /*
                          * Now we have a packet, let's see if it belongs to our audio stream
@@ -217,6 +221,7 @@ public class MediaPlayback {
                 }
                 isPlaying = false;
                 curLine = null;
+                refContainer = null;
             }
         };
         t.start();
@@ -248,6 +253,7 @@ public class MediaPlayback {
             refThread.interrupt();
             isPaused = false;
             curLine = null;
+            refContainer = null;
         }
     }
 
@@ -257,6 +263,7 @@ public class MediaPlayback {
             //curLine.flush();
             curLine.close();
             refThread.interrupt();
+            refContainer = null;
             isPlaying = false;
             ++currentIndex;
         }
@@ -268,8 +275,19 @@ public class MediaPlayback {
             //curLine.flush();
             curLine.close();
             refThread.interrupt();
+            refContainer = null;
             isPlaying = false;
             --currentIndex;
+        }
+    }
+
+    public void seek(int seekVal) {
+        if (isPlaying) {
+            pauseAudio();
+            curLine.stop();
+            IRational timeBase = refContainer.getStream(refStreamId).getTimeBase();
+            refContainer.seekKeyFrame(refStreamId, (long)(seekVal / timeBase.getDouble()), IURLProtocolHandler.SEEK_CUR);
+            resumeAudio();
         }
     }
     
@@ -322,16 +340,7 @@ public class MediaPlayback {
             mLine = null;
         }
     }
-    
-    public boolean lineRunning() {
-        if (curLine != null) {
-            return curLine.isRunning();
-        }
-        else {
-            return false;
-        }
-    }
-    
+
     private class VolumeAdjustMediaTool extends MediaToolAdapter {
         
         // the amount to adjust the volume by
