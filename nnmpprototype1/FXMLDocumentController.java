@@ -151,7 +151,7 @@ public class FXMLDocumentController implements Initializable {
                     if (mediaPlaybackController.isPlaybackActive()) {
                         mediaPlaybackController.stopAudioPlayback();
                     }
-                    
+
                     playbackQueueController.flush();
                     mediaPlaybackController.setPlaybackIndex(0);
                     nnmpprototype1.AudioFile rowData = row.getItem();
@@ -286,12 +286,12 @@ public class FXMLDocumentController implements Initializable {
                                             songData.get(6),
                                             albumList.get(i)));
                         }
+                        tblContext.setAudioTableList(audioTableList);
                     }
                 }
 
                 if (item.getClass().equals(UnknownTreeItem.class)) {
                     if (mouseEvent.getClickCount() == 1) {
-                        System.out.print("Funtimes\n");
 
                         UnknownTreeItem albumItem = (UnknownTreeItem) item;
                        // List<Integer> albumList = db.getSongsByAlbum(albumItem.getId());
@@ -317,7 +317,7 @@ public class FXMLDocumentController implements Initializable {
         sldVolume.setMax(6);
         sldVolume.setMin(-80);
         sldVolume.setValue(-37);
-        sldVolume.setBlockIncrement(.10);
+        sldVolume.setBlockIncrement(.05f);
         sldVolume.valueProperty().addListener((ObservableValue<? extends Number> ov, Number oldVal, Number newVal) -> {
             mediaPlaybackController.setPlaybackVolume(newVal.floatValue());
         });
@@ -340,13 +340,6 @@ public class FXMLDocumentController implements Initializable {
                 listenForNextItem();
             }
         });
-
-        /*
-        sldSeekBar.valueProperty().addListener((ObservableValue<? extends Number> ov, Number oldVal, Number newVal) -> {
-            if (isSeeking) {
-                seekTime = newVal.intValue();
-            }
-        }); */
 
         openPlaylist.setOnAction((ActionEvent t) ->{
             M3UPlaylistController playlistController = new M3UPlaylistController();
@@ -559,21 +552,22 @@ public class FXMLDocumentController implements Initializable {
         int hour = Math.floorDiv(duration, 3600);
         int min = (duration / 60) % 60;
         int sec = duration % 60;
-        //String newTime = "";
 
         if (hour > 0) {
             sb.append(hour + ":");
-           // newTime += hour + ":";
         }
-        sb.append(min + ":");
-        //newTime += min + ":";
+
+        if (hour > 0 && min < 10) {
+            sb.append("0" + min + ":");
+        }
+        else {
+            sb.append(min + ":");
+        }
 
         if (sec < 10) {
             sb.append("0");
-            //newTime += "0";
         }
         sb.append(sec);
-        //newTime += sec;
 
         String newTime = sb.toString();
         sb.setLength(0);

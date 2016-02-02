@@ -55,11 +55,13 @@ public class MediaPlayback {
      * @throws java.lang.InterruptedException
      */
     public void playAudio() {
-        isPlaying = true;
+
         
         Thread t = new Thread() {
             @Override
             public void run() {
+
+                isPlaying = true;
 
                 while (isPlaying && currentIndex < pqc.getPlaybackList().getSize() && !this.isInterrupted()) {
 
