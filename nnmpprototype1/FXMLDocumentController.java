@@ -42,6 +42,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javax.imageio.ImageIO;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import javafx.scene.layout.AnchorPane;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -94,6 +95,7 @@ public class FXMLDocumentController implements Initializable {
     private final PlaybackListContextMenu plContext = new PlaybackListContextMenu();
     private final NNMPMediaPlayer mediaPlayer = new NNMPMediaPlayer();
     private final String DBNAME = "nnmpdb.db";
+    private final String DEFAULTTIME = "0:00";
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -113,8 +115,7 @@ public class FXMLDocumentController implements Initializable {
         sldSeekBar.setBlockIncrement(1);
     }
 
-    @FXML
-    protected void handlePlayButtonActionEvent(ActionEvent event) {
+    @FXML protected void handlePlayButtonActionEvent(ActionEvent event) {
         if (mediaPlayer.isPaused()) {
             mediaPlayer.resumeMediaPlayback();
             startSeekSlider(seekTime);
@@ -145,15 +146,13 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    @FXML
-    protected void handlePauseButtonActionEvent(ActionEvent event) {
+    @FXML protected void handlePauseButtonActionEvent(ActionEvent event) {
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.pauseMediaPlayback();
         }
     }
 
-    @FXML
-    protected void handleStopButtonActionEvent(ActionEvent event) {
+    @FXML protected void handleStopButtonActionEvent(ActionEvent event) {
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.stopMediaPlayback();
         }
@@ -163,11 +162,10 @@ public class FXMLDocumentController implements Initializable {
             timer = null;
         }
         sldSeekBar.setValue(0);
-        lblElapsedTime.setText("0:00");
+        lblElapsedTime.setText(DEFAULTTIME);
     }
 
-    @FXML
-    protected void handleNextButtonActionEvent(ActionEvent event) {
+    @FXML protected void handleNextButtonActionEvent(ActionEvent event) {
         if (mediaPlayer.isPlaying()) {
             loadMediaUIData();
             mediaPlayer.playNextFile();
@@ -175,8 +173,7 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    @FXML
-    protected void handlePrevButtonActionEvent(ActionEvent event) {
+    @FXML protected void handlePrevButtonActionEvent(ActionEvent event) {
         if (mediaPlayer.isPlaying()) {
             loadMediaUIData();
             mediaPlayer.playPreviousFile();
@@ -184,16 +181,13 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    @FXML
-    protected void handleListViewMouseClicked(MouseEvent mouseEvent) {
+    @FXML protected void handleListViewMouseClicked(MouseEvent mouseEvent) {
         if(mouseEvent.getClickCount() == 2 && mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
 
             if (mediaPlayer.isPlaying()) {
                 mediaPlayer.stopMediaPlayback();
             }
-
             mediaPlayer.playFileAt(listView.getSelectionModel().getSelectedIndex());
-            //nnmpprototype1.AudioFile rowData = listView.getSelectionModel().getSelectedItem();
 
             play();
         }
@@ -205,8 +199,7 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    @FXML
-    protected void handleMusicTreeMouseClicked(MouseEvent mouseEvent) {
+    @FXML protected void handleMusicTreeMouseClicked(MouseEvent mouseEvent) {
 
         TreeItem<String> item = (TreeItem<String>) musicTree.getSelectionModel().getSelectedItem();
 
@@ -400,7 +393,6 @@ public class FXMLDocumentController implements Initializable {
 
            if (timer == null) {
                startSeekSlider(0);
-               System.out.println("Started");
            }
            else {
                resetSeekSlider();
@@ -439,10 +431,9 @@ public class FXMLDocumentController implements Initializable {
                 seekTime = 0;
                 sldSeekBar.setValue(0);
 
-                /*
                 Platform.runLater(() -> {
-                    lblElapsedTime.setText("0:00");
-                });*/
+                    lblElapsedTime.setText(DEFAULTTIME);
+                });
             }
         }).start();
     }
@@ -472,7 +463,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     private void resetSeekSlider() {
-        lblElapsedTime.setText("0:00");
+        lblElapsedTime.setText(DEFAULTTIME);
         seekTime = 0;
         sldSeekBar.setValue(0);
 
