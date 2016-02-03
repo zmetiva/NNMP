@@ -16,12 +16,12 @@
          <right>
             <HBox alignment="CENTER_RIGHT" prefHeight="64.0" prefWidth="250.0" stylesheets="@../nnmp.css" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="btnPrev" mnemonicParsing="false">
+                  <Button fx:id="btnPrev" mnemonicParsing="false" onAction="#handlePrevButtonActionEvent">
                      <HBox.margin>
                         <Insets left="5.0" />
                      </HBox.margin>
                   </Button>
-                        <Button fx:id="btnPause" alignment="CENTER" mnemonicParsing="false">
+                        <Button fx:id="btnPause" alignment="CENTER" mnemonicParsing="false" onAction="#handlePauseButtonActionEvent">
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>
@@ -29,7 +29,7 @@
                               <Insets />
                            </HBox.margin>
                         </Button>
-                  <Button fx:id="btnPlay" alignment="CENTER" mnemonicParsing="false">
+                  <Button fx:id="btnPlay" alignment="CENTER" mnemonicParsing="false" onAction="#handlePlayButtonActionEvent">
                      <opaqueInsets>
                         <Insets />
                      </opaqueInsets>
@@ -37,12 +37,12 @@
                         <Insets />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="btnStop" mnemonicParsing="false">
+                  <Button fx:id="btnStop" mnemonicParsing="false" onAction="#handleStopButtonActionEvent">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="btnNext" mnemonicParsing="false">
+                  <Button fx:id="btnNext" mnemonicParsing="false" onAction="#handleNextButtonActionEvent">
                      <HBox.margin>
                         <Insets right="5.0" />
                      </HBox.margin>
@@ -97,7 +97,7 @@
          <center>
             <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <center>
-                  <Slider fx:id="sldSeekBar" BorderPane.alignment="CENTER" />
+                  <Slider fx:id="sldSeekBar" onMousePressed="#handleSeekbarMousePressed" onMouseReleased="#handleSeekbarMouseReleased" BorderPane.alignment="CENTER" />
                </center>
                <top>
                   <HBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
@@ -138,7 +138,7 @@
                                        <items>
                                           <BorderPane prefHeight="200.0" prefWidth="200.0">
                                              <center>
-                                                <TreeView fx:id="musicTree" minWidth="300.0" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                                                <TreeView fx:id="musicTree" minWidth="300.0" onMouseClicked="#handleMusicTreeMouseClicked" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
                                              </center>
                                           </BorderPane>
                                           <BorderPane maxHeight="300.0" minHeight="300.0" minWidth="300.0" prefHeight="200.0" prefWidth="200.0">
@@ -179,7 +179,7 @@
                                        <children>
                                           <BorderPane layoutX="198.0" layoutY="-30.0" prefHeight="103.0" prefWidth="650.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <center>
-                                                <ListView fx:id="listView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                                                <ListView fx:id="listView" onMouseClicked="#handleListViewMouseClicked" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
                                              </center>
                                           </BorderPane>
                                        </children>
@@ -204,13 +204,13 @@
             <menus>
               <Menu mnemonicParsing="false" text="File">
                 <items>
-                        <MenuItem fx:id="openPlaylist" mnemonicParsing="false" text="Open Playlist" />
-                        <MenuItem fx:id="savePlaylist" mnemonicParsing="false" text="Save Playlist" />
+                        <MenuItem fx:id="openPlaylist" mnemonicParsing="false" onAction="#handleOpenPlaylistMenuItemOnActionEvent" text="Open Playlist" />
+                        <MenuItem fx:id="savePlaylist" mnemonicParsing="false" onAction="#handleSavePlaylistMenuItemOnActionEvent" text="Save Playlist" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="importLibraryItem" mnemonicParsing="false" text="Import Library" />
+                  <MenuItem fx:id="importLibraryItem" mnemonicParsing="false" onAction="#handleImportLibraryMenuItemOnActionEvent" text="Import Library" />
                         <MenuItem mnemonicParsing="false" text="Refresh Lirary" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="quitItem" mnemonicParsing="false" text="Quit" />
+                  <MenuItem fx:id="quitItem" mnemonicParsing="false" onAction="#handleQuitMenuItemOnActionEvent" text="Quit" />
                 </items>
               </Menu>
               <Menu mnemonicParsing="false" text="Edit">
