@@ -102,6 +102,7 @@ public class MediaPlayback {
                             break;
                         }
                     }
+
                     if (audioStreamId == -1) {
                         throw new RuntimeException("could not find audio stream in container: " + filename);
                     }
@@ -162,11 +163,13 @@ public class MediaPlayback {
 
                                 while (!this.isInterrupted() && offset < packet.getSize()) {
                                     int bytesDecoded = audioCoder.decodeAudio(samples, packet, offset);
+                                    System.out.println("here");
                                     if (bytesDecoded < 0) {
                                         //throw new RuntimeException("got error decoding audio in: " + filename);
                                         break;
                                     }
                                     offset += bytesDecoded;
+
                                 /*
                                  * Some decoder will consume data in a packet, but will not be able to construct
                                  * a full set of samples yet.  Therefore you should always check if you

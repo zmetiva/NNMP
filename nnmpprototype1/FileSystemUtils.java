@@ -26,7 +26,7 @@ import org.jaudiotagger.tag.TagException;
  */
 public class FileSystemUtils {
 
-    final private String[] EXTENTIONS = {"mp3", "wma", "ogg", "aac", "mp4", "wav", "m4a"};
+    final private String[] EXTENTIONS = {"mp3", "ogg", "aac", "mp4", "wav", "m4a"};
     private ExecutorService threads = Executors.newCachedThreadPool(); /*newFixedThreadPool(Runtime.getRuntime().availableProcessors());*/
     Collection<Callable<nnmpprototype1.AudioFile>> tasks = new ArrayList<Callable<nnmpprototype1.AudioFile>>();
 

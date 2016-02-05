@@ -391,21 +391,23 @@ public class FXMLDocumentController implements Initializable {
 
            loadMediaUIData();
 
+           mediaPlayer.startMediaPlayback();
+           listenForNextItem();
+
            if (timer == null) {
                startSeekSlider(0);
            }
            else {
                resetSeekSlider();
            }
-
-           mediaPlayer.startMediaPlayback();
-           listenForNextItem();
        }
     }
 
     private void listenForNextItem() {
         new Thread(() -> {
+
             while (mediaPlayer.isPlaying() && !mediaPlayer.isPaused()) {
+
                 if (mediaPlayer.hasSongChanged()) {
                     try {
                         Thread.sleep(5);
@@ -419,6 +421,8 @@ public class FXMLDocumentController implements Initializable {
                             if (!mediaPlayer.isPaused()) {
                                 resetSeekSlider();
                             }
+
+                            listView.getSelectionModel().select(mediaPlayer.getActiveIndex());
                         }
                     });
                 }
