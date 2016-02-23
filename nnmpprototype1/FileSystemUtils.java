@@ -100,7 +100,7 @@ public class FileSystemUtils {
     }
     private void addItemsToDB(NNMPDB db){
 
-        System.out.println("HERE!!!");
+        //System.out.println("HERE!!!");
         prgDialog.setProgress((float)0);
 
         for (int i = 0; i < tags.size(); ++i) {
@@ -109,7 +109,7 @@ public class FileSystemUtils {
 
             prgDialog.setLabel("Adding: " + tag.getFirst(FieldKey.TITLE));
             prgDialog.setProgress((float)prgDialog.getProgress() + (float)1/tags.size());
-            System.out.println((float)prgDialog.getProgress() + (float)1/tags.size());
+            //System.out.println((float)prgDialog.getProgress() + (float)1/tags.size());
 
             int artist = db.addArtist(tags.get(i).getFirst(FieldKey.ARTIST));
             int album = db.addAlbum(tags.get(i).getFirst(FieldKey.ALBUM), artist);
@@ -141,7 +141,7 @@ public class FileSystemUtils {
         artistList = db.getAllArtists();
         unknownList = db.getAllUnknown();
 
-        System.out.println("DONE!");
+        //System.out.println("DONE!");
         processingCompleted.set(true);
 
 

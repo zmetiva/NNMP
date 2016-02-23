@@ -59,6 +59,7 @@ public class FXMLMetadataController implements Initializable {
         // Nice to have this in a load() method instead of constructor, but this seems to be the convention.
         try {
             stage.setScene(new Scene((Parent) fxmlLoader.load()));
+            stage.setResizable(false);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,7 +98,7 @@ public class FXMLMetadataController implements Initializable {
         txtAlbum.setText(audioFile.getAlbum());
         txtTrack.setText(audioFile.getTrack());
         txtYear.setText(audioFile.getYear());
-        //ivArtwork.setImage(audioFile.get);
+        ivArtwork.setImage(audioFile.getAlbumArt());
         stage.showAndWait();
     }
 

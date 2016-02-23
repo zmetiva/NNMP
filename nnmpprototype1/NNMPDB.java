@@ -29,7 +29,7 @@ public class NNMPDB {
             Class.forName("org.sqlite.JDBC");
             
             c = DriverManager.getConnection("jdbc:sqlite:nnmpdb.db");
-            System.out.println("Opened database successfully");
+            //System.out.println("Opened database successfully");
             stmt = c.createStatement();
             
             String sql = "CREATE TABLE IF NOT EXISTS album (" +
@@ -69,7 +69,7 @@ public class NNMPDB {
           System.exit(0);
         }
     }
-    
+
     public int addSong(String track, String title, String year, int duration, String location, int albumId) {
         
         boolean exists = this.songExists(title, albumId);
@@ -191,24 +191,27 @@ public class NNMPDB {
 
     public int addUnknown(String title, String location, int duration) {
 
+        boolean exists = this.unknownExists(location);
         int index = 0;
 
-        String sql = "INSERT INTO unknown (unknown_id, unknown_title, location, duration) VALUES (NULL, '" + title.replaceAll("'", "''") + "', '" + location.replaceAll("'","''") + "', " + duration + ");";
-        runQuery(sql);
+        if (!exists) {
 
-        sql = "SELECT MAX(unknown_id) FROM unknown;";
+            String sql = "INSERT INTO unknown (unknown_id, unknown_title, location, duration) VALUES (NULL, '" + title.replaceAll("'", "''") + "', '" + location.replaceAll("'", "''") + "', " + duration + ");";
+            runQuery(sql);
 
-        ResultSet rs = this.runResultQuery(sql);
+            sql = "SELECT MAX(unknown_id) FROM unknown;";
 
-        try {
-            index = rs.getInt(1);
-        } catch (SQLException ex) {
-            Logger.getLogger(NNMPDB.class.getName()).log(Level.SEVERE, null, ex);
+            ResultSet rs = this.runResultQuery(sql);
+
+            try {
+                index = rs.getInt(1);
+            } catch (SQLException ex) {
+                Logger.getLogger(NNMPDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            clean();
+
         }
-
-        clean();
-
-
         return index;
     }
 
@@ -275,7 +278,25 @@ public class NNMPDB {
         
         return exists == 1;
     }
-    
+
+    public boolean unknownExists(String location) {
+        String sql = "SELECT EXISTS(SELECT location FROM unknown WHERE location = '" + location.replaceAll("'", "''") + "')";
+
+        int exists = 0;
+
+        ResultSet rs = this.runResultQuery(sql);
+
+        try {
+            exists = rs.getInt(1);
+        } catch (SQLException ex) {
+            Logger.getLogger(NNMPDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        clean();
+
+        return exists == 1;
+    }
+
     public List<Integer> getAllSongs() {
         String sql = "SELECT song_id FROM song";
         ArrayList<Integer> songs = new ArrayList<>();
@@ -520,8 +541,9 @@ public class NNMPDB {
     
     public ArrayList<Integer> getSongsByArtist(int artistId) {
         ArrayList<Integer> ids = new ArrayList<>();
+        ArrayList<Integer> artists = new ArrayList<>();
         
-        String sql = "SELECT song_id FROM song WHERE album.artist_id = " + artistId;
+        String sql = "SELECT album_id FROM album WHERE artist_id = " + artistId;
 
         ResultSet rs = this.runResultQuery(sql);
         
@@ -534,9 +556,12 @@ public class NNMPDB {
         }
 
         clean();
+
+        for (int i  = 0; i < ids.size(); ++i) {
+            artists.addAll(this.getSongsByAlbum(ids.get(i)));
+        }
         
-        
-        return ids;  
+        return artists;
     }
     
     public ArrayList<Integer> getAlbumsByArtist(int artistId) {
@@ -604,6 +629,7 @@ public class NNMPDB {
 
         return info;
     }
+
 
     public void updateSong() {
 

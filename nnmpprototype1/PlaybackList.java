@@ -15,13 +15,22 @@ import javafx.collections.ObservableList;
  * @author tyler
  */
 public class PlaybackList {
-    
+
+    int playbackIndex = 0;
     private ObservableList<nnmpprototype1.AudioFile> playQueue = FXCollections.observableArrayList();
     
     public PlaybackList() {
         
     }
-    
+
+    public void setPlaybackIndex(int playbackIndex) {
+        this.playbackIndex = playbackIndex;
+    }
+
+    public int getPlaybackIndex() {
+        return playbackIndex;
+    }
+
     public void enqueueFile(nnmpprototype1.AudioFile file) {
         playQueue.add(file);
     }

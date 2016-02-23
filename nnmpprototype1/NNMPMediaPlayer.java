@@ -75,6 +75,14 @@ public class NNMPMediaPlayer {
         mediaPlaybackController.setPlaybackVolume(vol);
     }
 
+    public void setPlaybackIndex(int playbackIndex) {
+        playbackQueueController.setPlaybackIndex(playbackIndex);
+    }
+
+    public int getAudioSourceIndex() {
+        return playbackQueueController.getPlaybackIndex();
+    }
+
     public boolean hasSongChanged() {
         return mediaPlaybackController.getSongChange();
     }
@@ -87,6 +95,10 @@ public class NNMPMediaPlayer {
         return mediaPlaybackController.getPausedStatus();
     }
 
+    public boolean isStoppedPressed() {
+        return mediaPlaybackController.isPlaybackStopped();
+    }
+
     public void seek(int val) {
         mediaPlaybackController.seekAudio(val);
     }
@@ -95,4 +107,7 @@ public class NNMPMediaPlayer {
         return playbackQueueController.getPlaybackList().getFileAt(mediaPlaybackController.getDataIndex());
     }
 
+    public void addChangeObserver(Observer o) {
+        mediaPlaybackController.addChangeObserver(o);
+    }
 }

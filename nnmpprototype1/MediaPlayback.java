@@ -11,6 +11,8 @@ import com.xuggle.xuggler.*;
 import com.xuggle.xuggler.io.IURLProtocolHandler;
 
 import java.nio.ShortBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.AudioFormat;
@@ -24,24 +26,30 @@ import javax.sound.sampled.SourceDataLine;
  *
  * @author zmmetiva, tmetiva
  */
-public class MediaPlayback {
+public class MediaPlayback implements Observable {
     
     /**
      * The audio line we'll output sound to; it'll be the default audio device on your system if available
      */
     
     private static SourceDataLine curLine = null;
-    private volatile boolean isPlaying = false;
-    private volatile boolean isPaused = false;
+    private boolean isPlaying = false;
+    private boolean isPaused = false;
+    private boolean isStopped = false;
     private Thread refThread;
     private IContainer refContainer;
-    private volatile int refStreamId;
+    private int refStreamId;
     private FloatControl volume;
     private float volLevel = -37;
     private PlaybackQueueController pqc;
-    private volatile boolean changeData = false;
+    private boolean changeData = false;
     private int currentIndex = 0;
-    private volatile boolean isDone = false;
+    private boolean isDone = false;
+    private List<Observer> observers = new ArrayList<>();
+    private IAudioSamples samples;
+    private int offset;
+    private int bytesDecoded;
+    private volatile boolean startUp = true;
     
     public MediaPlayback() {
         
@@ -56,16 +64,21 @@ public class MediaPlayback {
      */
     public void playAudio() {
 
-        isPlaying = true;
-        
+        //isPlaying = true;
+        isPaused = false;
+        startUp = true;
+
         Thread t = new Thread() {
             @Override
             public void run() {
 
-                while (isPlaying && currentIndex < pqc.getPlaybackList().getSize() && !this.isInterrupted()) {
+                //isPlaying = true;
+                //isPaused = false;
 
+                do {
                     changeData = false;
                     isDone = false;
+                    isStopped = false;
 
                     //IMediaWriter writer = ToolFactory.makeWriter("test1.wav");
 
@@ -128,11 +141,18 @@ public class MediaPlayback {
                      */
                     IPacket packet = IPacket.make();
 
-                    //container.seekKeyFrame(refStreamId, 300*1000*1000, IURLProtocolHandler.SEEK_CUR);
                     while (!this.isInterrupted() && /*container.readNextPacket(packet) >= 0*/ !isDone) {
                         /*
                          * Now we have a packet, let's see if it belongs to our audio stream
                          */
+
+                        if (isPaused) {
+                            try {
+                                Thread.sleep(1);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
 
                         if (!isPaused && container.readNextPacket(packet) < 0) {
                             isDone = true;
@@ -148,22 +168,21 @@ public class MediaPlayback {
                              * We also pass in a buffer size (1024 in our example), although Xuggler
                              * will probably allocate more space than just the 1024 (it's not important why).
                              */
-                                IAudioSamples samples = IAudioSamples.make(1024, audioCoder.getChannels());
+                                samples = IAudioSamples.make(1024, audioCoder.getChannels());
 
                             /*
                              * A packet can actually contain multiple sets of samples (or frames of samples
                              * in audio-decoding speak).  So, we may need to call decode audio multiple
                              * times at different offsets in the packet's data.  We capture that here.
                              */
-                                int offset = 0;
+                                offset = 0;
 
                             /*
                              * Keep going until we've processed all data
                              */
 
                                 while (!this.isInterrupted() && offset < packet.getSize()) {
-                                    int bytesDecoded = audioCoder.decodeAudio(samples, packet, offset);
-                                    System.out.println("here");
+                                    bytesDecoded = audioCoder.decodeAudio(samples, packet, offset);
                                     if (bytesDecoded < 0) {
                                         //throw new RuntimeException("got error decoding audio in: " + filename);
                                         break;
@@ -181,7 +200,7 @@ public class MediaPlayback {
                                             //writer.encodeAudio(0, samples);
                                             playJavaSound(samples, mLine);
                                         } catch (Exception e) {
-                                            System.out.println(e);
+                                            //System.out.println(e);
                                         }
                                     }
                                 }
@@ -210,22 +229,31 @@ public class MediaPlayback {
                         container.close();
                         container = null;
                     }
-                    System.out.println("DONE!");
+                    //System.out.println("DONE!");
                     
                     if (!this.isInterrupted()) {
 
-                        changeData = true;
-                        try {
+                        //changeData = true;
+
+                        /*try {
                             Thread.sleep(5);
                         } catch (InterruptedException ex) {
 
-                        }
+                        }*/
                         ++currentIndex;
+                        changeSong();
                     }
-                }
+                    curLine = null;
+                    refContainer = null;
+                    samples = null;
+
+                } while (isPlaying && currentIndex < pqc.getPlaybackList().getSize() && !this.isInterrupted());
+
                 isPlaying = false;
                 curLine = null;
                 refContainer = null;
+                samples = null;
+                refThread = null;
             }
         };
         t.start();
@@ -250,6 +278,7 @@ public class MediaPlayback {
 
     public void stopAudio() {
         if (curLine != null) {
+            isStopped = true;
             isPlaying = false;
             //curLine.stop();
             //curLine.flush();
@@ -301,6 +330,7 @@ public class MediaPlayback {
                 aAudioCoder.getChannels(),
                 true, /* xuggler defaults to signed 16 bit samples */
                 false);
+
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
         try {
             SourceDataLine mLine = (SourceDataLine) AudioSystem.getLine(info);
@@ -313,8 +343,7 @@ public class MediaPlayback {
              * And if that succeed, start the line.
              */
             mLine.start();
-            setVolume(volLevel);
-            
+
             return mLine;
         } catch (LineUnavailableException e) {
             throw new RuntimeException("could not open audio line");
@@ -325,8 +354,15 @@ public class MediaPlayback {
         /**
          * We're just going to dump all the samples into the line.
          */
-        byte[] rawBytes = aSamples.getData().getByteArray(0, aSamples.getSize());
-        mLine.write(rawBytes, 0, aSamples.getSize());
+        //rawBytes = aSamples.getData().getByteArray(0, aSamples.getSize());
+        mLine.write(aSamples.getData().getByteArray(0, aSamples.getSize()), 0, aSamples.getSize());
+
+        if (startUp) {
+            isPlaying = true;
+            notifyObserver();
+            startUp = false;
+        }
+        setVolume(volLevel);
         //System.out.println("playjavasound");
         
     }
@@ -345,6 +381,7 @@ public class MediaPlayback {
         }
     }
 
+    /*
     private class VolumeAdjustMediaTool extends MediaToolAdapter {
         
         // the amount to adjust the volume by
@@ -353,6 +390,7 @@ public class MediaPlayback {
         public VolumeAdjustMediaTool(double volume) {
             mVolume = volume;
         }
+
 
         @Override
         public void onAudioSamples(IAudioSamplesEvent event) {
@@ -369,7 +407,7 @@ public class MediaPlayback {
             super.onAudioSamples(event);
         }
     }
-    
+    */
     public boolean active() {
         return isPlaying;
     }
@@ -407,4 +445,29 @@ public class MediaPlayback {
         return isPaused;
     }
 
+    public boolean getIsStopped() {
+        return isStopped;
+    }
+
+    @Override
+    public void addObserver(Observer o) {
+        observers.add(o);
+    }
+
+    @Override
+    public void removeObserver(Observer o) {
+        observers.remove(o);
+    }
+
+    @Override
+    public void notifyObserver() {
+        for (Observer obs : observers) {
+            obs.update();
+        }
+    }
+
+    private void changeSong() {
+        changeData = true;
+        notifyObserver();
+    }
 }

@@ -56,6 +56,10 @@ public class MediaPlaybackController {
         return player.active();
     }
 
+    public boolean isPlaybackStopped() {
+        return player.getIsStopped();
+    }
+
     public void setPlaybackVolume(float level) {
         player.setVolume(level);
     }
@@ -78,5 +82,9 @@ public class MediaPlaybackController {
 
     public void seekAudio(int seekVal) {
         player.seek(seekVal);
+    }
+
+    public void addChangeObserver(Observer o) {
+        player.addObserver(o);
     }
 }

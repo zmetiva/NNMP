@@ -78,7 +78,7 @@ public class M3UPlaylistGenerator {
 
                 while(scanner.hasNext()) {
                     line.append(scanner.nextLine());
-                    System.out.println(line.toString());
+                    //System.out.println(line.toString());
                     if (line.toString().contains("#EXTM3U")) {
                         isExtendedM3U = true;
                     }
@@ -86,7 +86,7 @@ public class M3UPlaylistGenerator {
                         line.delete(0, line.length());
 
                         line.append(scanner.nextLine());
-                        System.out.println(line.toString());
+                        //System.out.println(line.toString());
                         try {
                             AudioFile audioFile = AudioFileIO.read(new File(line.toString()));
                             Tag tag = audioFile.getTag();
@@ -112,7 +112,7 @@ public class M3UPlaylistGenerator {
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-                System.out.print("FFD");
+                //System.out.print("FFD");
             }
 
         }

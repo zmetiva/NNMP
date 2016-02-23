@@ -5,6 +5,8 @@
  */
 package nnmpprototype1;
 
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.exceptions.CannotWriteException;
@@ -14,10 +16,16 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 import org.jaudiotagger.tag.TagField;
+import org.jaudiotagger.tag.images.Artwork;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -106,7 +114,13 @@ public class AudioFile extends MediaFile {
         if (hour > 0) {
             newTime += hour + ":";
         }
-        newTime += min + ":";
+
+        if (hour > 0 && min < 10) {
+            newTime += "0" + min + ":";
+        }
+        else {
+            newTime += min + ":";
+        }
         
         if (sec < 10) {
             newTime += "0";
@@ -146,6 +160,36 @@ public class AudioFile extends MediaFile {
             e.printStackTrace();
         }
 
+    }
+
+    public Image getAlbumArt() {
+        try {
+            File file = new File(this.location);
+            org.jaudiotagger.audio.AudioFile f = AudioFileIO.read(file);
+            Tag tag = f.getTag();
+
+            if (tag != null) {
+                List<Artwork> artList = tag.getArtworkList();
+
+                if (artList != null && !artList.isEmpty()) {
+                    for (int i = 0; i < artList.size(); ++i) {
+                        if (artList.get(i) != null && artList.get(i).getBinaryData() != null) {
+                            try {
+                                ByteArrayInputStream bias = new ByteArrayInputStream(artList.get(i).getBinaryData());
+                                BufferedImage img = ImageIO.read(bias);
+                                if (img != null) {
+                                    return SwingFXUtils.toFXImage(img, null);
+                                }
+                            } catch (IOException | NullPointerException ex) {}
+                        }
+                    }
+                }
+            }
+        } catch (CannotReadException | IOException | TagException
+                | ReadOnlyFileException | InvalidAudioFrameException ex) {
+            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override

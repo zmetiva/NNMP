@@ -18,7 +18,15 @@ public class PlaybackQueueController {
     public PlaybackQueueController() {
         
     }
-    
+
+    public void setPlaybackIndex(int playbackIndex) {
+        playbackList.setPlaybackIndex(playbackIndex);
+    }
+
+    public int getPlaybackIndex() {
+        return playbackList.getPlaybackIndex();
+    }
+
     public void enqueueAudioFile(nnmpprototype1.AudioFile file) {
         playbackList.enqueueFile(file);
     }
