@@ -87,4 +87,8 @@ public class MediaPlaybackController {
     public void addChangeObserver(Observer o) {
         player.addObserver(o);
     }
+
+    public float getVolumeLevel() {
+        return player.getVolLevel();
+    }
 }

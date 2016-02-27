@@ -409,18 +409,7 @@ public class FXMLDocumentController implements Initializable, Observer {
            if (audioTable.getSelectionModel().getSelectedCells().size() > 0) {
                mediaPlayer.setPlaybackIndex(audioTable.getSelectionModel().getSelectedIndex());
            }
-
            mediaPlayer.startMediaPlayback();
-           //listenForNextItem();
-
-           /*
-           if (timer == null) {
-               startSeekSlider(0);
-           }
-           else {
-               resetSeekSlider();
-           }
-           */
        }
     }
 

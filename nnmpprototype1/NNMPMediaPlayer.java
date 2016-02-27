@@ -110,4 +110,8 @@ public class NNMPMediaPlayer {
     public void addChangeObserver(Observer o) {
         mediaPlaybackController.addChangeObserver(o);
     }
+
+    public float getVolumeLevel() {
+        return mediaPlaybackController.getVolumeLevel();
+    }
 }

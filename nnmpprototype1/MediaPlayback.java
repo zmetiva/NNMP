@@ -54,35 +54,19 @@ public class MediaPlayback implements Observable {
     public MediaPlayback() {
         
     }
-    
-    /**
-     * Takes a media container (file) as the first argument, opens it,
-     * opens up the default audio device on your system, and plays back the audio.
-     *  
-     * @param args Must contain one string which represents a filename
-     * @throws java.lang.InterruptedException
-     */
-    public void playAudio() {
 
-        //isPlaying = true;
+    public void playAudio() {
         isPaused = false;
         startUp = true;
 
         Thread t = new Thread() {
             @Override
             public void run() {
-
-                //isPlaying = true;
-                //isPaused = false;
-
                 do {
                     changeData = false;
                     isDone = false;
                     isStopped = false;
 
-                    //IMediaWriter writer = ToolFactory.makeWriter("test1.wav");
-
-                    //String filename = mediaFile;
                     String filename = pqc.getPlaybackList().getFileAt(currentIndex).getLocation();
 
                     // Create a Xuggler container object
@@ -219,7 +203,6 @@ public class MediaPlayback implements Observable {
                      * the garbage collector... but we're going to show how to clean up.
                      */
                     closeJavaSound(mLine);
-                    //writer.close();
 
                     if (audioCoder != null) {
                         audioCoder.close();
@@ -232,14 +215,6 @@ public class MediaPlayback implements Observable {
                     //System.out.println("DONE!");
                     
                     if (!this.isInterrupted()) {
-
-                        //changeData = true;
-
-                        /*try {
-                            Thread.sleep(5);
-                        } catch (InterruptedException ex) {
-
-                        }*/
                         ++currentIndex;
                         changeSong();
                     }
@@ -363,8 +338,6 @@ public class MediaPlayback implements Observable {
             startUp = false;
         }
         setVolume(volLevel);
-        //System.out.println("playjavasound");
-        
     }
 
     private void closeJavaSound(SourceDataLine mLine) {
@@ -381,33 +354,6 @@ public class MediaPlayback implements Observable {
         }
     }
 
-    /*
-    private class VolumeAdjustMediaTool extends MediaToolAdapter {
-        
-        // the amount to adjust the volume by
-        private double mVolume;
-        
-        public VolumeAdjustMediaTool(double volume) {
-            mVolume = volume;
-        }
-
-
-        @Override
-        public void onAudioSamples(IAudioSamplesEvent event) {
-            
-            // get the raw audio bytes and adjust it's value
-            ShortBuffer buffer = 
-               event.getAudioSamples().getByteBuffer().asShortBuffer();
-            
-            for (int i = 0; i < buffer.limit(); ++i) {
-                buffer.put(i, (short) (buffer.get(i) * mVolume));
-            }
-
-            // call parent which will pass the audio onto next tool in chain
-            super.onAudioSamples(event);
-        }
-    }
-    */
     public boolean active() {
         return isPlaying;
     }
@@ -447,6 +393,10 @@ public class MediaPlayback implements Observable {
 
     public boolean getIsStopped() {
         return isStopped;
+    }
+
+    public float getVolLevel() {
+        return volLevel;
     }
 
     @Override
