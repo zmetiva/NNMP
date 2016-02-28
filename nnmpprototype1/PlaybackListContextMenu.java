@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TableView;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -33,11 +34,9 @@ public class PlaybackListContextMenu extends ContextMenu {
     private final MenuItem savePlaylist = new MenuItem("Save Playlist");
 
 
-   //FXMLMetadataController metadataDia = new FXMLMetadataController();
-
     private PlaybackList list;
     private int selectedIndex;
-    
+
     PlaybackListContextMenu() {
         super();
         this.getItems().add(moveUp);
@@ -51,7 +50,7 @@ public class PlaybackListContextMenu extends ContextMenu {
         this.getItems().add(new SeparatorMenuItem());
         this.getItems().add(loadPlaylist);
         this.getItems().add(savePlaylist);
-        
+
         removeFile.setOnAction((ActionEvent e) -> {
             list.removeFileAt(selectedIndex);
         });
@@ -63,10 +62,11 @@ public class PlaybackListContextMenu extends ContextMenu {
         editMetadata.setOnAction((ActionEvent e) -> {
             FXMLMetadataController metadataDia = new FXMLMetadataController(list.getFileAt(selectedIndex));
             metadataDia.showAndWaitDialog();
+            list.getList().set(selectedIndex,metadataDia.getUpdatedAudioFile());
         });
 
         convertAudio.setOnAction((ActionEvent e) -> {
-            FXMLConvertController convertController = new FXMLConvertController();
+            FXMLConvertController convertController = new FXMLConvertController(list.getFileAt(selectedIndex));
             convertController.showDialog();
         });
 
@@ -94,11 +94,11 @@ public class PlaybackListContextMenu extends ContextMenu {
             }
         });
     }
-    
+
     public void setSelectedIndex(int selectedIndex) {
         this.selectedIndex = selectedIndex;
     }
-    
+
     public void setPlaybackList(PlaybackList list) {
         this.list = list;
     }

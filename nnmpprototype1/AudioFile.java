@@ -17,6 +17,7 @@ import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 import org.jaudiotagger.tag.TagField;
 import org.jaudiotagger.tag.images.Artwork;
+import org.jaudiotagger.tag.images.ArtworkFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -32,24 +33,22 @@ import java.util.logging.Logger;
  * @author zmmetiva
  */
 public class AudioFile extends MediaFile {
-    
+
     private String artist;
     private String album;
     private String title;
     private String track;
     private String year;
-    
-    // TODO: Image for artwork
-    
+
     private int songId;
-    
+
     public AudioFile() {
         super();
     }
-    
+
     public AudioFile(String location, int duration, String artist, String album, String title, String track, String year, int songId) {
         super(location, duration);
-        
+
         this.artist = artist;
         this.album = album;
         this.title = title;
@@ -57,28 +56,28 @@ public class AudioFile extends MediaFile {
         this.songId = songId;
         this.year = year;
     }
-    
+
     public void setArtist(String artist) {
         this.artist = artist;
     }
-    
+
     public void setAlbum(String album) {
-        this.album = album;        
+        this.album = album;
     }
-    
+
     public void setTitle(String title) {
-        this.title = title;        
+        this.title = title;
     }
-    
+
     public void setTrack(String track) {
-        this.track = track;        
+        this.track = track;
     }
 
     public void setYear(String year) {this.year = year; }
 
     public void setSongId(int songId) {
         this.songId = songId;
-        
+
     }
 
     public int getDuration() { return duration; }
@@ -86,19 +85,19 @@ public class AudioFile extends MediaFile {
     public String getArtist() {
         return artist;
     }
-    
+
     public String getAlbum() {
         return album;
     }
-    
+
     public String getTitle() {
         return title;
     }
-    
+
     public String getTrack() {
         return track;
     }
-      
+
     public int getSongId() {
         return songId;
     }
@@ -110,7 +109,7 @@ public class AudioFile extends MediaFile {
         int min = (duration / 60) % 60;
         int sec = duration % 60;
         String newTime = "";
-        
+
         if (hour > 0) {
             newTime += hour + ":";
         }
@@ -121,7 +120,7 @@ public class AudioFile extends MediaFile {
         else {
             newTime += min + ":";
         }
-        
+
         if (sec < 10) {
             newTime += "0";
         }
@@ -190,6 +189,28 @@ public class AudioFile extends MediaFile {
             Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+
+    public void saveAlbumArt(String imgLocation) {
+        File file = new File(this.location);
+        org.jaudiotagger.audio.AudioFile f = null;
+
+        try {
+            f = AudioFileIO.read(file);
+            Tag tag = f.getTag();
+            File imgFile = new File(imgLocation);
+
+            if (tag != null) {
+                Artwork art = ArtworkFactory.createArtworkFromFile(imgFile);
+                tag.deleteArtworkField();
+                tag.setField(art);
+                f.commit();
+            }
+
+        } catch (CannotWriteException | CannotReadException | IOException | ReadOnlyFileException | TagException | InvalidAudioFrameException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override

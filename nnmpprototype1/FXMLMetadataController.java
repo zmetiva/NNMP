@@ -6,13 +6,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -45,12 +46,15 @@ public class FXMLMetadataController implements Initializable {
 
     @FXML Button btnSave = new Button();
 
+    String newImgLoc;
+
     nnmpprototype1.AudioFile audioFile;
 
 
     Stage stage = new Stage();
 
     public FXMLMetadataController(nnmpprototype1.AudioFile file) {
+
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("FXMLMetadata.fxml"));
         fxmlLoader.setController(this);
 
@@ -78,17 +82,41 @@ public class FXMLMetadataController implements Initializable {
             audioFile.setTrack(txtTrack.getText());
             audioFile.setYear(txtYear.getText());
 
+
             audioFile.saveMetadata();
+
+            if (newImgLoc != null) {
+                audioFile.saveAlbumArt(newImgLoc);
+            }
 
             stage.close();
 
-            //NNMPDB db;
+            NNMPDB db = new NNMPDB();
 
-            //db.updateSong();
+            db.updateSong(audioFile.getSongId(), txtTrack.getText(), txtTitle.getText(), txtAlbum.getText(), txtArtist.getText(), txtYear.getText());
+        });
+        ivArtwork.setOnMouseClicked((MouseEvent e) -> {
+
+            FileChooser fileChooser = new FileChooser();
+            FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("JPEG Images (*.jpg, *jpeg)", "*.jpg", "*.JPG");
+            fileChooser.getExtensionFilters().add(extensionFilter);
+            File imgFile = fileChooser.showOpenDialog(stage);
+
+            ivArtwork.setImage(new Image("file://" + imgFile.getAbsolutePath()));
+            newImgLoc = imgFile.getAbsolutePath();
+
+
         });
     }
 
     public void showDialog() {
+
+        txtTitle.setText(audioFile.getTitle());
+        txtArtist.setText(audioFile.getArtist());
+        txtAlbum.setText(audioFile.getAlbum());
+        txtTrack.setText(audioFile.getTrack());
+        txtYear.setText(audioFile.getYear());
+        ivArtwork.setImage(audioFile.getAlbumArt());
         stage.show();
     }
 
@@ -108,4 +136,7 @@ public class FXMLMetadataController implements Initializable {
         });
     }
 
+    public nnmpprototype1.AudioFile getUpdatedAudioFile() {
+        return audioFile;
+    }
 }
