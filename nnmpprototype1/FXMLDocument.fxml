@@ -209,12 +209,15 @@
                         <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="importLibraryItem" mnemonicParsing="false" onAction="#handleImportLibraryMenuItemOnActionEvent" text="Import Library" />
                         <MenuItem mnemonicParsing="false" text="Refresh Lirary" />
+                    <SeparatorMenuItem mnemonicParsing="false" />
+                    <MenuItem fx:id="ripCd" mnemonicParsing="false" onAction="#handleRipAudioCDItemOnActionEvent" text="Rip Audio CD" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="quitItem" mnemonicParsing="false" onAction="#handleQuitMenuItemOnActionEvent" text="Quit" />
                 </items>
               </Menu>
               <Menu mnemonicParsing="false" text="Edit">
                 <items>
+                    <MenuItem fx:id="organizeLibrary" mnemonicParsing="false" text="Organize Library" onAction="#handleOrganizeLibraryMenuItemOnActionEvent"/>
                     <MenuItem mnemonicParsing="false" text="Preferences…" />
                 </items>
               </Menu>

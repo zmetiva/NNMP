@@ -34,13 +34,13 @@ import java.util.logging.Logger;
  */
 public class AudioFile extends MediaFile {
 
-    private String artist;
-    private String album;
-    private String title;
-    private String track;
-    private String year;
+    private String artist = "";
+    private String album = "";
+    private String title = "";
+    private String track = "";
+    private String year = "";
 
-    private int songId;
+    private int songId = -1;
 
     public AudioFile() {
         super();

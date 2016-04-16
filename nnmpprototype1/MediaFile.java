@@ -10,8 +10,8 @@ package nnmpprototype1;
  * @author zmmetiva
  */
 public abstract class MediaFile {
-    protected String location;
-    protected int duration;
+    protected String location = "";
+    protected int duration = -1;
 
     public MediaFile() {
         

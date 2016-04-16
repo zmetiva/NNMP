@@ -81,6 +81,8 @@ public class FXMLDocumentController implements Initializable, Observer {
     @FXML private MenuItem quitItem;
     @FXML private MenuItem openPlaylist;
     @FXML private MenuItem savePlaylist;
+    @FXML private MenuItem ripCd;
+    @FXML private MenuItem organizeLibrary;
     @FXML private Slider sldVolume;
     @FXML private Slider sldSeekBar;
     private ObservableList<nnmpprototype1.AudioFile> audioTableList = FXCollections.observableArrayList();
@@ -330,6 +332,17 @@ public class FXMLDocumentController implements Initializable, Observer {
 
     @FXML protected void handleImportLibraryMenuItemOnActionEvent(ActionEvent event) {
         openImportDialog();
+    }
+
+    @FXML protected void handleRipAudioCDItemOnActionEvent(ActionEvent event) {
+        FXMLCDRipperController fxmlcdRipperController = new FXMLCDRipperController();
+
+        fxmlcdRipperController.showDialog();
+    }
+
+    @FXML protected void handleOrganizeLibraryMenuItemOnActionEvent(ActionEvent event) {
+        FXMLOrganizerController organizerController = new FXMLOrganizerController();
+        organizerController.showDialog();
     }
 
     @FXML protected void handleQuitMenuItemOnActionEvent(ActionEvent event) {

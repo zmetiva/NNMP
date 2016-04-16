@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="501.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <ListView fx:id="lvFiles" prefHeight="151.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets left="5.0" right="5.0" />
+         </padding></ListView>
+   </center>
+   <bottom>
+      <BorderPane prefHeight="55.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <bottom>
+            <VBox prefHeight="117.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label fx:id="lblStatus" alignment="TOP_LEFT" text="Click on the button below to start ripping CD...">
+                     <VBox.margin>
+                        <Insets left="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <ProgressBar fx:id="prgBar" prefHeight="20.0" prefWidth="630.0" progress="0.0">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </ProgressBar>
+                  <Button fx:id="btnRipCd" mnemonicParsing="false" prefHeight="55.0" prefWidth="600.0" text="Start Rip">
+                     <VBox.margin>
+                        <Insets left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Button>
+               </children>
+            </VBox>
+         </bottom>
+         <center>
+            <VBox prefHeight="194.0" prefWidth="600.0" style="-fx-border-style: hidden hidden solid hidden; -fx-border-color: grey grey lightgrey grey; -fx-border-width: 0 0 2 0;" BorderPane.alignment="CENTER">
+               <children>
+                  <HBox prefHeight="36.0" prefWidth="600.0">
+                     <children>
+                        <Label prefHeight="15.0" prefWidth="60.0" text="Title: ">
+                           <HBox.margin>
+                              <Insets left="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="txtTitle" prefHeight="25.0" prefWidth="529.0" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="5.0" top="5.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox prefHeight="26.0" prefWidth="600.0">
+                     <children>
+                        <Label prefHeight="15.0" prefWidth="61.0" text="Artist: ">
+                           <HBox.margin>
+                              <Insets left="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="txtArtist" prefHeight="25.0" prefWidth="247.0" />
+                        <Label text="Album: ">
+                           <HBox.margin>
+                              <Insets left="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="txtAlbum" prefHeight="25.0" prefWidth="224.0" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox prefHeight="13.0" prefWidth="600.0">
+                     <children>
+                        <Label prefHeight="15.0" prefWidth="61.0" text="Track: ">
+                           <HBox.margin>
+                              <Insets left="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="txtTrack" prefHeight="25.0" prefWidth="73.0" />
+                        <Label text="Year: ">
+                           <HBox.margin>
+                              <Insets left="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="txtYear" prefHeight="25.0" prefWidth="81.0" />
+                        <CheckBox fx:id="chkSave" mnemonicParsing="false" text="Save Artist and Album for all tracks">
+                           <HBox.margin>
+                              <Insets left="15.0" top="5.0" />
+                           </HBox.margin>
+                        </CheckBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+               <opaqueInsets>
+                  <Insets left="5.0" right="5.0" />
+               </opaqueInsets>
+            </VBox>
+         </center>
+      </BorderPane>
+   </bottom>
+   <top>
+      <VBox prefHeight="47.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox prefHeight="7.0" prefWidth="600.0">
+               <children>
+                  <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefWidth="90.0" text="Source: ">
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <ChoiceBox fx:id="choiceDrive" prefHeight="25.0" prefWidth="483.0" />
+               </children>
+               <padding>
+                  <Insets bottom="5.0" />
+               </padding>
+            </HBox>
+            <HBox prefHeight="0.0" prefWidth="600.0">
+               <children>
+                  <Label alignment="CENTER_RIGHT" prefWidth="90.0" text="Destination: ">
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <TextField fx:id="txtDest" prefHeight="25.0" prefWidth="483.0" />
+               </children>
+               <padding>
+                  <Insets bottom="5.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+</BorderPane>

@@ -22,7 +22,7 @@ public class M3UPlaylistController {
         File playlistFile = saveDialog.showSaveDialog(new Stage().getOwner());
         M3UPlaylistGenerator generator = new M3UPlaylistGenerator(list.getList());
 
-        generator.generate(playlistFile.getAbsolutePath());
+        generator.generate(playlistFile.getAbsolutePath() + ".m3u");
     }
 
     public void openPlaylist(PlaybackList list) {

@@ -2,6 +2,7 @@ package nnmpprototype1;
 
 import com.xuggle.mediatool.*;
 import com.xuggle.mediatool.event.IAddStreamEvent;
+import com.xuggle.mediatool.event.IWritePacketEvent;
 import com.xuggle.xuggler.IStreamCoder;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -109,24 +110,34 @@ public class FXMLConvertController implements Initializable {
         // add a IMediaListner to the writer to change bit rate
         mediaWriter.addListener(new MediaListenerAdapter() {
             @Override
+            public void onWritePacket(IWritePacketEvent event) {
+                //super.onWritePacket(event);
+                IStreamCoder streamCoder = event.getSource().getContainer().getStream(event.getStreamIndex()).getStreamCoder();
+                System.out.println(event.getPacket().getStreamIndex());
+            }
+
+            @Override
             public void onAddStream(IAddStreamEvent event) {
                 IStreamCoder streamCoder = event.getSource().getContainer().getStream(event.getStreamIndex()).getStreamCoder();
                 streamCoder.setFlag(IStreamCoder.Flags.FLAG_QSCALE, false);
                 streamCoder.setBitRate(kbps);
                 streamCoder.setBitRateTolerance(0);
+
             }
         });
 
-
         prgConvert.setProgress(-1);
         lblProgress.setText("Converting " + input + "....");
-
-
+        mediaReader.getContainer().setReadRetryCount(200);
         new Thread(() -> {
             // read and decode packets from the source file and
             // and dispatch decoded audio and video to the writer
-
+            int i = 0;
             try {
+                while (mediaReader.readPacket() != null) {
+                    i++;
+                }
+
                 while (mediaReader.readPacket() == null) {
 
                 }
