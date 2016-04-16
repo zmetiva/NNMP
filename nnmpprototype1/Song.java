@@ -28,13 +28,13 @@ public class Song extends TreeItem<String> {
     }
     
     public String getTitle() {
-        NNMPDB db = new NNMPDB();
+        NNMPDB db = NNMPDB.getInstance();
         
         return db.getSongTitle(this.id);
     }
     
     public String getLocation() {
-        NNMPDB db = new NNMPDB();
+        NNMPDB db = NNMPDB.getInstance();
         
         return db.getSongLocation(this.id);
     }

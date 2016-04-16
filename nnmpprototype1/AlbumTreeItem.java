@@ -26,7 +26,7 @@ public class AlbumTreeItem extends TreeItem<String> {
     }
     
     public String getTitle() {
-        NNMPDB db = new NNMPDB();
+        NNMPDB db = NNMPDB.getInstance();
         
         return db.getAlbumTitle(this.id);
     }

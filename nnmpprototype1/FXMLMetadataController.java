@@ -91,7 +91,7 @@ public class FXMLMetadataController implements Initializable {
 
             stage.close();
 
-            NNMPDB db = new NNMPDB();
+            NNMPDB db = NNMPDB.getInstance();
 
             db.updateSong(audioFile.getSongId(), txtTrack.getText(), txtTitle.getText(), txtAlbum.getText(), txtArtist.getText(), txtYear.getText());
         });

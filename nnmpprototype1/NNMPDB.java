@@ -16,11 +16,16 @@ import java.util.logging.Logger;
  * @author zmmetiva
  */
 public class NNMPDB {
+    private  static NNMPDB dbInstance = new NNMPDB();
     private Connection c = null;
     private Statement st = null;
 
-    NNMPDB() {
+    private NNMPDB() {
 
+    }
+
+    public static NNMPDB getInstance() {
+        return dbInstance;
     }
 
     public void create() {

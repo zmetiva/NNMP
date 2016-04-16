@@ -32,6 +32,7 @@ public class PlaybackListContextMenu extends ContextMenu {
     private final MenuItem clearQueue = new MenuItem("Remove All");
     private final MenuItem loadPlaylist = new MenuItem("Load Playlist");
     private final MenuItem savePlaylist = new MenuItem("Save Playlist");
+    private final MenuItem shuffleList = new MenuItem("Shuffle");
 
 
     private PlaybackList list;
@@ -50,6 +51,8 @@ public class PlaybackListContextMenu extends ContextMenu {
         this.getItems().add(new SeparatorMenuItem());
         this.getItems().add(loadPlaylist);
         this.getItems().add(savePlaylist);
+        this.getItems().add(new SeparatorMenuItem());
+        this.getItems().add(shuffleList);
 
         removeFile.setOnAction((ActionEvent e) -> {
             list.removeFileAt(selectedIndex);
@@ -91,6 +94,12 @@ public class PlaybackListContextMenu extends ContextMenu {
         moveDown.setOnAction((ActionEvent e) -> {
             if (!list.empty() && selectedIndex != list.getSize() - 1) {
                 list.swap(selectedIndex, selectedIndex + 1);
+            }
+        });
+
+        shuffleList.setOnAction((ActionEvent e) -> {
+            if (!list.empty()) {
+                Collections.shuffle(list.getList());
             }
         });
     }

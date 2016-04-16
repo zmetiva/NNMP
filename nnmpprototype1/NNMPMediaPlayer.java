@@ -8,11 +8,16 @@ import javafx.collections.ObservableList;
 
 public class NNMPMediaPlayer {
 
+    private static NNMPMediaPlayer mediaPlayer = new NNMPMediaPlayer();
     private final PlaybackQueueController playbackQueueController = new PlaybackQueueController();
     private final MediaPlaybackController mediaPlaybackController = new MediaPlaybackController();
 
-    public NNMPMediaPlayer() {
+    private NNMPMediaPlayer() {
         mediaPlaybackController.setPlaybackQueueController(playbackQueueController);
+    }
+
+    public static NNMPMediaPlayer getInstance() {
+        return mediaPlayer;
     }
 
     public void enqueueToPlaybackQueue(nnmpprototype1.AudioFile file) {

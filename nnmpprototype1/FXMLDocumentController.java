@@ -88,7 +88,7 @@ public class FXMLDocumentController implements Initializable, Observer {
     private ObservableList<nnmpprototype1.AudioFile> audioTableList = FXCollections.observableArrayList();
     private List<Integer> artistList = new ArrayList<>();
     private List<Integer> unknownList = new ArrayList<>();
-    private NNMPDB db = new NNMPDB();
+    private NNMPDB db = NNMPDB.getInstance();
     private Timer timer;
     private int seekTime = 0;
     private boolean isSeeking = false;
@@ -96,7 +96,7 @@ public class FXMLDocumentController implements Initializable, Observer {
     private StringBuilder sb = new StringBuilder();
     private final TableContextMenu tblContext = new TableContextMenu();
     private final PlaybackListContextMenu plContext = new PlaybackListContextMenu();
-    private final NNMPMediaPlayer mediaPlayer = new NNMPMediaPlayer();
+    private final NNMPMediaPlayer mediaPlayer = NNMPMediaPlayer.getInstance();
     private final String DBNAME = "nnmpdb.db";
     private final String DEFAULTTIME = "0:00";
 

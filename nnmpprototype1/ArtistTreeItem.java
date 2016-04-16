@@ -27,7 +27,7 @@ public class ArtistTreeItem extends TreeItem<String> {
     }
     
     public String getTitle() {
-        NNMPDB db = new NNMPDB();
+        NNMPDB db = NNMPDB.getInstance();
         
         return db.getArtistName(this.id);
     }

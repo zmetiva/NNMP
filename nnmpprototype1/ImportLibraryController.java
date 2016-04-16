@@ -24,18 +24,14 @@ public class ImportLibraryController {
     FileSystemUtils fileUtils = new FileSystemUtils();
 
     public void importMusic(File path, NNMPDB db) {
-
         fileUtils.populateMusicMetadata(path.getPath(),db);
-
     }
 
     public boolean isProcessingComplete() {
-
         return fileUtils.isComplete();
     }
 
     public List<Integer> getArtistList() {
-
         return fileUtils.getArtistList();
     }
 

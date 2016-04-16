@@ -156,22 +156,6 @@ public class FileSystemUtils {
         prgDialog.showDialog();
         db.create();
 
-        /*Thread t = new Thread (() -> {
-            for (int i = 0; i < EXTENTIONS.length; ++i) {
-                getFiles(path, EXTENTIONS[i], db);
-            }
-        });*/
-
-        /*try {
-
-            /*t.start();
-
-            t.sleep(1000);
-
-            while(t.isAlive()) {
-
-            }*/
-
             new Thread(() -> {
                 prgDialog.setProgress(-1);
 
@@ -183,9 +167,7 @@ public class FileSystemUtils {
                     prgDialog.setProgress(0);
                 }).start();
 
-                //prgDialog.setProgress((float)0);
                 addItemsToDB(db);
-                //artistList = db.getAllArtists();
                 prgDialog.closeDialog();
             }).start();
 
