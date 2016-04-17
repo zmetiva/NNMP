@@ -1,19 +1,21 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package nnmpprototype1;
 
 import javafx.scene.control.TreeItem;
 
 /**
- *
- * @author zmmetiva
+ * Artist Tree Item - Contains the artist information for the tree items in the main GUI. Allows for each album sub-tree
+ * to be populated.
  */
 public class ArtistTreeItem extends TreeItem<String> {
+
+    // The id of the artist item
     private int id;
-    
+
+    /**
+     * Parameterized Constructor
+     *
+     * @param id the id of the artist
+     */
     ArtistTreeItem (int id) {
         super();
         this.id = id;
@@ -21,11 +23,21 @@ public class ArtistTreeItem extends TreeItem<String> {
         this.setValue(getTitle());
         
     }
-    
+
+    /**
+     * Returns the artist tree item id.
+     *
+     * @return the artist tree item title
+     */
     public int getId() {
         return id;
     }
-    
+
+    /**
+     * Returns the artist tree item title.
+     *
+     * @return the artist tree item title
+     */
     public String getTitle() {
         NNMPDB db = NNMPDB.getInstance();
         
