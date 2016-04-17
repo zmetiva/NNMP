@@ -1,7 +1,8 @@
 package nnmpprototype1;
 
 /**
- * Created by Tyler on 2/11/2016.
+ * The Observer interface is used in the implementation of the Observer Pattern.
+ * The FXMLDocumentController class acts as an observer of the observable MediaPlayback Class.
  */
 public interface Observer {
     public void update();
