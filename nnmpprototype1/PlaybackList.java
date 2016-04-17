@@ -4,6 +4,8 @@ package nnmpprototype1;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.Collections;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -69,5 +71,18 @@ public class PlaybackList {
     
     public void flush() {
         playQueue.clear();
+    }
+
+    public Memento save() {
+        return new Memento(playQueue);
+    }
+
+    public void undoLastSave(Object obj) {
+        Memento memento = (Memento) obj;
+        ObservableList<nnmpprototype1.AudioFile> c = memento.getState();
+        playQueue.clear();
+        for (AudioFile a : c) {
+            playQueue.add(a);
+        }
     }
 }

@@ -5,17 +5,10 @@
  */
 package nnmpprototype1;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.TableView;
-import javafx.stage.FileChooser;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -24,6 +17,7 @@ import java.util.Collections;
  */
 public class PlaybackListContextMenu extends ContextMenu {
 
+    private PlaybackListCaretaker caretaker = new PlaybackListCaretaker();
     private final MenuItem moveUp = new MenuItem("Move Up");
     private final MenuItem moveDown = new MenuItem("Move Down");
     private final MenuItem removeFile = new MenuItem("Remove");
@@ -33,10 +27,11 @@ public class PlaybackListContextMenu extends ContextMenu {
     private final MenuItem loadPlaylist = new MenuItem("Load Playlist");
     private final MenuItem savePlaylist = new MenuItem("Save Playlist");
     private final MenuItem shuffleList = new MenuItem("Shuffle");
-
+    private final MenuItem restoreList = new MenuItem("Restore Queue");
 
     private PlaybackList list;
     private int selectedIndex;
+    private boolean isShuffled = false;
 
     PlaybackListContextMenu() {
         super();
@@ -53,6 +48,7 @@ public class PlaybackListContextMenu extends ContextMenu {
         this.getItems().add(savePlaylist);
         this.getItems().add(new SeparatorMenuItem());
         this.getItems().add(shuffleList);
+        this.getItems().add(restoreList);
 
         removeFile.setOnAction((ActionEvent e) -> {
             list.removeFileAt(selectedIndex);
@@ -99,8 +95,17 @@ public class PlaybackListContextMenu extends ContextMenu {
 
         shuffleList.setOnAction((ActionEvent e) -> {
             if (!list.empty()) {
+                if (!isShuffled) {
+                    caretaker.save(list);
+                }
                 Collections.shuffle(list.getList());
+                isShuffled = true;
             }
+        });
+
+        restoreList.setOnAction((ActionEvent e) -> {
+            caretaker.undo(list);
+            isShuffled = false;
         });
     }
 
