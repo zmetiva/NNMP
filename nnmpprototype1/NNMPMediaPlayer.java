@@ -225,4 +225,8 @@ public class NNMPMediaPlayer {
     public float getVolumeLevel() {
         return mediaPlaybackController.getVolumeLevel();
     }
+
+    public boolean isPrePlaySeek() {
+        return mediaPlaybackController.isPrePlaySeek();
+    }
 }

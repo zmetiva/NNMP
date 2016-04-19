@@ -156,4 +156,8 @@ public class MediaPlaybackController {
     public float getVolumeLevel() {
         return player.getVolLevel();
     }
+
+    public boolean isPrePlaySeek() {
+        return player.isPrePlaySeek();
+    }
 }

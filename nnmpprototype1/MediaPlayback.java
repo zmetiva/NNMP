@@ -59,6 +59,9 @@ public class MediaPlayback implements Observable {
     /** boolean representing initial playback start status */
     private volatile boolean startUp = true;
 
+    private boolean prePlaySeek;
+    private int v;
+
     /**
      * Default Constructor
      */
@@ -217,6 +220,7 @@ public class MediaPlayback implements Observable {
                     curLine = null;
                     refContainer = null;
                     samples = null;
+                    prePlaySeek = false;
 
                 } while (isPlaying && currentIndex < pqc.getPlaybackList().getSize() && !this.isInterrupted());
 
@@ -333,8 +337,8 @@ public class MediaPlayback implements Observable {
         if (isPlaying) {
 
             // Pause playback and stop SourceDataLine
-            pauseAudio();
-            curLine.stop();
+            //pauseAudio();
+            //curLine.stop();
 
             // Calculate time base needed to seek to desired frame
             IRational timeBase = refContainer.getStream(refStreamId).getTimeBase();
@@ -343,7 +347,11 @@ public class MediaPlayback implements Observable {
             refContainer.seekKeyFrame(refStreamId, (long)(seekVal / timeBase.getDouble()), IURLProtocolHandler.SEEK_CUR);
 
             // Resume audio playback
-            resumeAudio();
+            //resumeAudio();
+        }
+        else {
+            prePlaySeek = true;
+            v = seekVal;
         }
     }
 
@@ -393,8 +401,14 @@ public class MediaPlayback implements Observable {
 
         // If this is the beginning of initial playback sequence
         if (startUp) {
+
             // Toggle playing boolean
             isPlaying = true;
+
+            if (prePlaySeek) {
+                seek(v);
+                //prePlaySeek = false;
+            }
 
             // Notify GUI on main thread to update relevant AudioFile information
             notifyObserver();
@@ -556,5 +570,9 @@ public class MediaPlayback implements Observable {
     private void changeSong() {
         changeData = true;
         notifyObserver();
+    }
+
+    public boolean isPrePlaySeek() {
+        return prePlaySeek;
     }
 }

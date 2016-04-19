@@ -91,7 +91,7 @@ public class FXMLDocumentController implements Initializable, Observer {
     private NNMPDB db = NNMPDB.getInstance();
     private Timer timer;
     private int seekTime = 0;
-    private boolean isSeeking = false;
+    private volatile boolean isSeeking = false;
     private boolean playlistFlag = false;
     private StringBuilder sb = new StringBuilder();
     private final TableContextMenu tblContext = new TableContextMenu();
@@ -123,7 +123,6 @@ public class FXMLDocumentController implements Initializable, Observer {
         if (mediaPlayer.isPaused()) {
             startSeekSlider(seekTime);
             mediaPlayer.resumeMediaPlayback();
-            //listenForNextItem();
         }
         else {
 
@@ -301,21 +300,22 @@ public class FXMLDocumentController implements Initializable, Observer {
     }
 
     @FXML protected void handleSeekbarMousePressed(MouseEvent mouseEvent) {
-        if (mediaPlayer.isPlaying()) {
+        //if (mediaPlayer.isPlaying() || mediaPlayer.isPaused()) {
+        if (!mediaPlayer.isPlaybackQueueEmpty()) {
             isSeeking = true;
         }
+        //}
     }
 
     @FXML protected void handleSeekbarMouseReleased(MouseEvent mouseEvent) {
-        if (mediaPlayer.isPlaying()) {
-
+        //if (mediaPlayer.isPlaying() || mediaPlayer.isPaused()) {
+        if (!mediaPlayer.isPlaybackQueueEmpty()) {
             seekTime = (int) sldSeekBar.getValue();
             mediaPlayer.seek(seekTime);
-            isSeeking = false;
             sldSeekBar.setValue(seekTime);
-            //startSeekSlider(seekTime);
-            //listenForNextItem();
+            isSeeking = false;
         }
+        //}
     }
 
     @FXML protected void handleOpenPlaylistMenuItemOnActionEvent(ActionEvent event) {
@@ -403,8 +403,6 @@ public class FXMLDocumentController implements Initializable, Observer {
             }
             rootItem.getChildren().add(artists);
         }
-        //System.out.println(unknownList.size());
-
         unknownItems.getChildren().add(unknownAlbum);
 
         rootItem.getChildren().add(unknownItems);
@@ -426,63 +424,6 @@ public class FXMLDocumentController implements Initializable, Observer {
        }
     }
 
-    /*
-    private void listenForNextItem() {
-        new Thread(() -> {
-
-            while (mediaPlayer.isPlaying() && !mediaPlayer.isPaused()) {
-
-                if (mediaPlayer.hasSongChanged()) {
-                    try {
-                        Thread.sleep(5);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    Platform.runLater(() -> {
-                        if (mediaPlayer.getActiveIndex() < mediaPlayer.getPlaybackQueue().getSize()) {
-                            loadMediaUIData();
-
-                            if (!mediaPlayer.isPaused()) {
-                                resetSeekSlider();
-                            }
-
-                            listView.getSelectionModel().select(mediaPlayer.getActiveIndex());
-                        }
-                    });
-                }
-            }
-            timer.cancel();
-            timer = null;
-
-            if (!mediaPlayer.isPaused()) {
-
-                seekTime = 0;
-                sldSeekBar.setValue(0);
-
-                Platform.runLater(() -> {
-                    lblElapsedTime.setText(DEFAULTTIME);
-                });
-            }
-
-            if (!playlistFlag && mediaPlayer.getPlaybackQueue().getSize() == 1 && !mediaPlayer.isPaused() && !isSeeking &&
-                    (audioTable.getSelectionModel().getSelectedIndex() + 1) < audioTable.getSelectionModel().getTableView().getItems().size() &&
-                    !mediaPlayer.isStoppedPressed()) {
-
-                    Platform.runLater(() -> {
-                        mediaPlayer.clearPlaybackQueue();
-                        mediaPlayer.playFileAt(0);
-                        mediaPlayer.setPlaybackIndex(mediaPlayer.getAudioSourceIndex() + 1);
-                        audioTable.getSelectionModel().select(mediaPlayer.getAudioSourceIndex());
-                        nnmpprototype1.AudioFile rowData = (nnmpprototype1.AudioFile) audioTable.getSelectionModel().getSelectedItem();
-                        mediaPlayer.enqueueToPlaybackQueue(rowData);
-                        play();
-                    });
-            }
-
-        }).start();
-    }
-*/
-
     private void startSeekSlider(int time) {
 
         final int dur = mediaPlayer.getActiveFile().getDuration();
@@ -499,7 +440,7 @@ public class FXMLDocumentController implements Initializable, Observer {
                 Platform.runLater(() -> {
                     if (!mediaPlayer.isPaused() && !sldSeekBar.isValueChanging() && !isSeeking) {
                         formatTime(seekTime);
-                        lblElapsedTime.setText(/*formatTime(seekTime)*/ sb.toString());
+                        lblElapsedTime.setText(sb.toString());
                         sb.setLength(0);
                         sldSeekBar.setValue(seekTime);
                         ++seekTime;
@@ -509,22 +450,12 @@ public class FXMLDocumentController implements Initializable, Observer {
         }, 0, 1000);
     }
 
-    private void resetSeekSlider() {
-        lblElapsedTime.setText(DEFAULTTIME);
-        seekTime = 0;
-        sldSeekBar.setValue(0);
-
-        if (!mediaPlayer.isPlaybackQueueEmpty()) {
-            sldSeekBar.setMax(mediaPlayer.getActiveFile().getDuration());
-        }
-    }
-
     private void loadMediaUIData() {
         lblSongPlaying.setText(mediaPlayer.getActiveFile().getTitle());
         lblArtistPlaying.setText(mediaPlayer.getActiveFile().getArtist());
         lblAlbumPlaying.setText(mediaPlayer.getActiveFile().getAlbum());
         formatTime(mediaPlayer.getActiveFile().getDuration());
-        lblTotalDuration.setText(/*formatTime(mediaPlayer.getActiveFile().getDuration())*/ sb.toString());
+        lblTotalDuration.setText(sb.toString());
         sb.setLength(0);
         ivAlbumArtPlaying.setImage(mediaPlayer.getActiveFile().getAlbumArt());
     }
@@ -549,11 +480,6 @@ public class FXMLDocumentController implements Initializable, Observer {
             sb.append("0");
         }
         sb.append(sec);
-
-        //String newTime = sb.toString();
-        //sb.setLength(0);
-
-        //return newTime;
     }
 
     private void initializeTableView() {
@@ -641,12 +567,16 @@ public class FXMLDocumentController implements Initializable, Observer {
 
                 if (!mediaPlayer.isPaused()) {
                         Platform.runLater(() -> {
-                            //resetSeekSlider();
                             if (timer != null) {
                                 timer.cancel();
                                 timer = null;
                             }
-                            startSeekSlider(0);
+                            if (mediaPlayer.isPrePlaySeek()) {
+                                startSeekSlider(seekTime);
+                            }
+                            else {
+                                startSeekSlider(0);
+                            }
                         });
                 }
                 listView.getSelectionModel().select(mediaPlayer.getActiveIndex());
