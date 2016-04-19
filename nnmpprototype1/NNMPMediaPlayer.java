@@ -226,6 +226,11 @@ public class NNMPMediaPlayer {
         return mediaPlaybackController.getVolumeLevel();
     }
 
+    /**
+     * Accessor method used to retrieve pre-play seek status
+     *
+     * @return boolean - pre-play seek status
+     */
     public boolean isPrePlaySeek() {
         return mediaPlaybackController.isPrePlaySeek();
     }

@@ -58,9 +58,10 @@ public class MediaPlayback implements Observable {
     private int bytesDecoded;
     /** boolean representing initial playback start status */
     private volatile boolean startUp = true;
-
+    /** boolean representing if pre-play seek has occurred */
     private boolean prePlaySeek;
-    private int v;
+    /** int holding the value of desired pre-play seek time */
+    private int prePlaySeekTime;
 
     /**
      * Default Constructor
@@ -74,7 +75,7 @@ public class MediaPlayback implements Observable {
      * This operation occurs on a separate thread, which needs to be referenced to perform
      * relevant operations throughout the process of audio playback.
      */
-    public void playAudio() {
+    public synchronized void playAudio() {
         // Initialize paused and start up status
         isPaused = false;
         startUp = true;
@@ -332,26 +333,22 @@ public class MediaPlayback implements Observable {
      *
      * @param seekVal - desired playback start time in seconds
      */
-    public void seek(int seekVal) {
+    public synchronized void seek(int seekVal) {
         // If playback is active
         if (isPlaying) {
-
-            // Pause playback and stop SourceDataLine
-            //pauseAudio();
-            //curLine.stop();
 
             // Calculate time base needed to seek to desired frame
             IRational timeBase = refContainer.getStream(refStreamId).getTimeBase();
 
             // Seek to desired position in AudioFile
             refContainer.seekKeyFrame(refStreamId, (long)(seekVal / timeBase.getDouble()), IURLProtocolHandler.SEEK_CUR);
-
-            // Resume audio playback
-            //resumeAudio();
         }
+        // If pre-play seek operation
         else {
+            // Toggle pre-play seek status
             prePlaySeek = true;
-            v = seekVal;
+            // Assign desired pre-play seek time
+            prePlaySeekTime = seekVal;
         }
     }
 
@@ -406,8 +403,7 @@ public class MediaPlayback implements Observable {
             isPlaying = true;
 
             if (prePlaySeek) {
-                seek(v);
-                //prePlaySeek = false;
+                seek(prePlaySeekTime);
             }
 
             // Notify GUI on main thread to update relevant AudioFile information
@@ -572,6 +568,11 @@ public class MediaPlayback implements Observable {
         notifyObserver();
     }
 
+    /**
+     * Accessor method used to retrieve pre-play seek status
+     *
+     * @return boolean - pre-play seek status
+     */
     public boolean isPrePlaySeek() {
         return prePlaySeek;
     }
