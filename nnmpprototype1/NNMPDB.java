@@ -21,7 +21,7 @@ public class NNMPDB {
     private Statement st = null;
 
     private NNMPDB() {
-
+        create();
     }
 
     public static NNMPDB getInstance() {

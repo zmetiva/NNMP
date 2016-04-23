@@ -8,7 +8,7 @@ import javafx.scene.control.TreeItem;
  */
 public class UnknownTreeItem extends TreeItem<String> {
 
-    // The id of the unknown entries
+    /** The id of the unknown entries **/
     private int id;
 
     /**

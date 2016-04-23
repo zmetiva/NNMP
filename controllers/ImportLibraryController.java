@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nnmpprototype1;
+package controllers;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,6 +13,8 @@ import java.util.concurrent.*;
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import javafx.stage.DirectoryChooser;
+import nnmpprototype1.FileSystemUtils;
+import nnmpprototype1.NNMPDB;
 
 
 /**

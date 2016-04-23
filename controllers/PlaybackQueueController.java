@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nnmpprototype1;
+package controllers;
 
 import javafx.collections.ObservableList;
+import nnmpprototype1.PlaybackList;
 
 /**
  * The PlaybackQueueController class acts as a controller that handles all operations

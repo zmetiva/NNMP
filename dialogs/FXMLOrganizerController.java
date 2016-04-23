@@ -1,4 +1,4 @@
-package nnmpprototype1;
+package dialogs;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

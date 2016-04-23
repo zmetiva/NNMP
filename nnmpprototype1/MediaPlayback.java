@@ -7,6 +7,8 @@ package nnmpprototype1;
 
 import com.xuggle.xuggler.*;
 import com.xuggle.xuggler.io.IURLProtocolHandler;
+import controllers.PlaybackQueueController;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.sound.sampled.AudioFormat;
@@ -145,7 +147,7 @@ public class MediaPlayback implements Observable {
                     while (!this.isInterrupted() && !isDone) {
 
                         // Put thread to sleep if playback paused
-                        if (isPaused) {
+                        if (isPaused && !isStopped) {
                             try {
                                 Thread.sleep(1);
                             } catch (InterruptedException e) {
@@ -337,6 +339,8 @@ public class MediaPlayback implements Observable {
         // If playback is active
         if (isPlaying) {
 
+            curLine.flush();
+
             // Calculate time base needed to seek to desired frame
             IRational timeBase = refContainer.getStream(refStreamId).getTimeBase();
 
@@ -359,7 +363,7 @@ public class MediaPlayback implements Observable {
      * @param aAudioCoder - IStreamCoder containing relevant data
      * @return SourceDataLine - data line required for audio playback
      */
-    private SourceDataLine openJavaSound(IStreamCoder aAudioCoder) {
+    private synchronized SourceDataLine openJavaSound(IStreamCoder aAudioCoder) {
         // Extract audio format information
         AudioFormat audioFormat = new AudioFormat(aAudioCoder.getSampleRate(),
                 (int) IAudioSamples.findSampleBitDepth(aAudioCoder.getSampleFormat()),
@@ -392,7 +396,7 @@ public class MediaPlayback implements Observable {
      * @param aSamples - set of collected audio samples
      * @param mLine - current SourceDataLine
      */
-    private void playJavaSound(IAudioSamples aSamples, SourceDataLine mLine) {
+    private synchronized void playJavaSound(IAudioSamples aSamples, SourceDataLine mLine) {
         // Dump collected samples to data line
         mLine.write(aSamples.getData().getByteArray(0, aSamples.getSize()), 0, aSamples.getSize());
 

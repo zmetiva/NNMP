@@ -8,7 +8,7 @@ import javafx.scene.control.TreeItem;
  */
 public class ArtistTreeItem extends TreeItem<String> {
 
-    // The id of the artist item
+    /** The id of the artist item **/
     private int id;
 
     /**

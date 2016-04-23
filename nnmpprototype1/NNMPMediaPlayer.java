@@ -1,5 +1,7 @@
 package nnmpprototype1;
 
+import controllers.MediaPlaybackController;
+import controllers.PlaybackQueueController;
 import javafx.collections.ObservableList;
 
 /**

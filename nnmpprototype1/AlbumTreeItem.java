@@ -9,7 +9,7 @@ import javafx.scene.control.TreeItem;
  */
 public class AlbumTreeItem extends TreeItem<String> {
 
-    // The album tree item id
+    /** The album tree item id **/
     private int id;
 
     /**

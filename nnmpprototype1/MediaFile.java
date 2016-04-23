@@ -5,10 +5,10 @@ package nnmpprototype1;
  */
 public abstract class MediaFile {
 
-    // The location of the media file
+    /** The location of the media file **/
     protected String location = "";
 
-    // The duration of the media file
+    /** The duration of the media file **/
     protected int duration = -1;
 
     /**

@@ -1,9 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package nnmpprototype1;
+
+package dialogs;
 
 import java.io.IOException;
 import java.net.URL;
@@ -20,7 +16,8 @@ import javafx.scene.control.ProgressBar;
 import javafx.stage.Stage;
 
 /**
- * FXML Controller class
+ * Import Progress Controller - A dialog that displays the current progress of the importing
+ * of the songs.
  *
  * @author zmmetiva
  */
@@ -31,20 +28,19 @@ public class FXMLImportProgressController implements Initializable {
     
     Stage stage = new Stage();
     
-    public FXMLImportProgressController()
-    {
+    public FXMLImportProgressController() {
+
+        // Set the FXML for the controller
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("FXMLImportProgress.fxml"));
         fxmlLoader.setController(this);
 
-        // Nice to have this in a load() method instead of constructor, but this seems to be the convention.
-        try
-        {
+        // Set the scene to the Stage
+        try {
             stage.setScene(new Scene((Parent) fxmlLoader.load()));
             prgBar.setProgress(-1);
             
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -57,25 +53,45 @@ public class FXMLImportProgressController implements Initializable {
         // TODO
     }
 
-
+    /**
+     * Method that shows the dialog.
+     */
     public void showDialog() {
         stage.show();
 
     }
-    
+
+    /**
+     * Method that sets the text for the label.
+     *
+     * @param label the text for the label
+     */
     public void setLabel(String label) {
         Platform.runLater(() -> {lblSong.setText(label);});
         
     }
-    
+
+    /**
+     * Method that sets the current progress of the progress bar.
+     *
+     * @param value the current progress
+     */
     public void setProgress(float value) {
         Platform.runLater(() -> {prgBar.setProgress(value);});
     }
-    
+
+    /**
+     * Method that closes the dialog.
+     */
     public void closeDialog() {
         Platform.runLater(() -> {stage.close();});
     }
-    
+
+    /**
+     * method that returns the progress from the progress bar.
+     *
+     * @return progress from the progress bar.
+     */
     public double getProgress() {
         return prgBar.getProgress();
     }

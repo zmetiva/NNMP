@@ -1,14 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package nnmpprototype1;
 
+package menus;
+
+import controllers.M3UPlaylistController;
+import dialogs.FXMLConvertController;
+import dialogs.FXMLMetadataController;
 import javafx.event.ActionEvent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import nnmpprototype1.PlaybackList;
+import nnmpprototype1.PlaybackListCaretaker;
+
 import java.util.Collections;
 
 /**
@@ -49,7 +51,7 @@ public class PlaybackListContextMenu extends ContextMenu {
     /**
      * Non-Arg Constructor
      */
-    PlaybackListContextMenu() {
+    public PlaybackListContextMenu() {
         // Call superclass constructor
         super();
 

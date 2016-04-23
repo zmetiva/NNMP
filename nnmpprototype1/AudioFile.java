@@ -30,14 +30,22 @@ import java.util.logging.Logger;
  */
 public class AudioFile extends MediaFile {
 
-    // The metadata of the audio file
+    /** The artist metadata of the audio file **/
     private String artist = "";
+
+    /** The album metadata of the audio file **/
     private String album = "";
+
+    /** The title metadata of the audio file **/
     private String title = "";
+
+    /** The track metadata of the audio file **/
     private String track = "";
+
+    /** The year metadata of the audio file **/
     private String year = "";
 
-    // The database id for the song
+    /** The database id for the song **/
     private int songId = -1;
 
     /**

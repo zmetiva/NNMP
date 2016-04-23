@@ -1,4 +1,7 @@
-package nnmpprototype1;
+package controllers;
+
+import nnmpprototype1.MediaPlayback;
+import nnmpprototype1.Observer;
 
 /**
  * The MediaPlayback Controller Class is used to control all operations required for the

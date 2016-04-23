@@ -14,6 +14,11 @@ import java.io.File;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
+
+import controllers.ImportLibraryController;
+import controllers.M3UPlaylistController;
+import dialogs.FXMLCDRipperController;
+import dialogs.FXMLOrganizerController;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -31,6 +36,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
+import menus.PlaybackListContextMenu;
+import menus.TableContextMenu;
 
 /**
  *
@@ -240,7 +247,7 @@ public class FXMLDocumentController implements Initializable, Observer {
      */
     @FXML protected void handleStopButtonActionEvent(ActionEvent event) {
         // If playback active
-        if (mediaPlayer.isPlaying()) {
+        if (mediaPlayer.isPlaying() || mediaPlayer.isPaused()) {
             // Stop playback
             mediaPlayer.stopMediaPlayback();
         }
@@ -336,19 +343,29 @@ public class FXMLDocumentController implements Initializable, Observer {
      */
     @FXML protected void handleMusicTreeMouseClicked(MouseEvent mouseEvent) {
 
+        // Create a TreeItem from the selected item
         TreeItem<String> item = (TreeItem<String>) musicTree.getSelectionModel().getSelectedItem();
 
+        // If the TreeItem is valid
         if (musicTree.getSelectionModel().getSelectedIndex() >= 0) {
 
+            // If it is a single click
             if (mouseEvent.getClickCount() == 1) {
 
+                // Check to see if the clicked item is an AlbumTreeItem
                 if (item.getClass().equals(AlbumTreeItem.class)) {
+
+                    // Convert the TreeItem to an AlbumTreeItem and get all songs from album
                     AlbumTreeItem albumItem = (AlbumTreeItem) item;
                     List<Integer> albumList = db.getSongsByAlbum(albumItem.getId());
+
+                    // Clear the table of songs
                     audioTableList.clear();
 
+                    // Populate the table of songs
                     for (int i = 0; i < albumList.size(); ++i) {
 
+                        // Get the song data from the database and add it to the table list
                         List<String> songData = db.getSongData(albumList.get(i));
                         audioTableList.add(
                                 new nnmpprototype1.AudioFile(songData.get(0),
@@ -360,17 +377,26 @@ public class FXMLDocumentController implements Initializable, Observer {
                                         songData.get(6),
                                         albumList.get(i)));
                     }
+
+                    // Set the list to the table
                     tblContext.setAudioTableList(audioTableList);
 
                 }
 
+                // Check to see if the clicked item is an ArtistTreeItem
                 if (item.getClass().equals(ArtistTreeItem.class)) {
+
+                    // Convert the TreeItem to an ArtistTreeItem and get all albums from artist
                     ArtistTreeItem artistItem = (ArtistTreeItem) item;
                     List<Integer> albumList = db.getSongsByArtist(artistItem.getId());
+
+                    // Clear the table of songs
                     audioTableList.clear();
 
+                    // Populate the table of songs
                     for (int i = 0; i < albumList.size(); ++i) {
 
+                        // Get the song data from the database and add it to the table list
                         List<String> songData = db.getSongData(albumList.get(i));
                         audioTableList.add(
                                 new nnmpprototype1.AudioFile(songData.get(0),
@@ -382,16 +408,22 @@ public class FXMLDocumentController implements Initializable, Observer {
                                         songData.get(6),
                                         albumList.get(i)));
                     }
+
+                    // Set the list to the table
                     tblContext.setAudioTableList(audioTableList);
 
                 }
 
+                // Check to see if the clicked item is an UnknownTreeItem
                 if (item.getClass().equals(UnknownTreeItem.class)) {
+
+                    // If it is a single click
                     if (mouseEvent.getClickCount() == 1) {
 
-                        UnknownTreeItem albumItem = (UnknownTreeItem) item;
+                        // Clear the table of songs
                         audioTableList.clear();
 
+                        // Populate the table of songs
                         for (int i = 0; i < unknownList.size(); ++i) {
                             List<String> unknownData = db.getUnknownData(unknownList.get(i));
                             audioTableList.add(
@@ -404,11 +436,15 @@ public class FXMLDocumentController implements Initializable, Observer {
                                             "",
                                             0));
                         }
+
+                        // Set the list to the table
                         tblContext.setAudioTableList(audioTableList);
                     }
                 }
             }
         }
+
+        // Scroll to the top of the table
         audioTable.scrollTo(0);
     }
 
@@ -546,24 +582,36 @@ public class FXMLDocumentController implements Initializable, Observer {
     }
 
     /**
-     *
+     * Method that pens a DirectoryChooser to allow the user to import the songs into the music player,
+     * then adds the songs into the database.
      */
     private void openImportDialog() {
+
+        // Create a DirectoryChooser
         DirectoryChooser dir = new DirectoryChooser();
         dir.setTitle("Import a Library...");
 
+        // Get the path from the DirectoryChooser
         File path = dir.showDialog(null);
 
+        // Create an Import Library Controller
         ImportLibraryController importLibraryController = new ImportLibraryController();
+
+        // Import songs to database
         Platform.runLater(() -> {
             importLibraryController.importMusic(path, db);
             new Thread(() -> {
+
+                // Make sure that the import process is completed
                 while (importLibraryController.isProcessingComplete() == false) {
 
                 }
+
+                // Get all of the artists and unknown entries
                 artistList = importLibraryController.getArtistList();
                 unknownList = importLibraryController.getUnknownList();
 
+                // Add the items to the tree
                 Platform.runLater(() -> {addItemsToTree();});
 
             }).start();
@@ -571,31 +619,38 @@ public class FXMLDocumentController implements Initializable, Observer {
     }
 
     /**
-     *
+     * Method that adds all of the imported items into the tree.
      */
     private void addItemsToTree() {
-        
+
+        // Create tree items for default tree view
         TreeItem<String> rootItem = new TreeItem("My Music", null);
         TreeItem<String> unknownItems = new TreeItem("(Unknown Entries)", null);
         UnknownTreeItem unknownAlbum = new UnknownTreeItem("(Unknown Album)");
 
+        // Populate all albums from all artists into tree
         for (int i = 0; i < artistList.size(); ++i) {
+
+            // Create an ArtistTreeItem and get all albums from artist
             ArtistTreeItem artists = new ArtistTreeItem(artistList.get(i));
             List<Integer> albumsByArtist = db.getAlbumsByArtist(artistList.get(i));
 
-            //TODO albumsByArtist.sort() :: By Album Title
-
+            // Create all AlbumTreeItems and add them to the artist
             for (int j = 0; j < albumsByArtist.size(); ++j) {
                 AlbumTreeItem albums = new AlbumTreeItem(albumsByArtist.get(j));
                 artists.getChildren().add(albums);
             }
+
+            // Add the ArtistTreeItem to the tree
             rootItem.getChildren().add(artists);
         }
+
+        // Add the unknown entries to tree
         unknownItems.getChildren().add(unknownAlbum);
-
         rootItem.getChildren().add(unknownItems);
-        rootItem.setExpanded(true);
 
+        // Expand the and set the root
+        rootItem.setExpanded(true);
         musicTree.setRoot(rootItem);
     }
 
@@ -719,32 +774,42 @@ public class FXMLDocumentController implements Initializable, Observer {
     }
 
     /**
-     *
+     * Method initializes the table rows and handles mouse click events from the selected row
      */
     private void initializeTableView() {
 
+        // Set the items to the table
         audioTable.setItems(audioTableList);
 
         audioTable.setRowFactory( tv -> {
 
+            // Create a table row and set the context menu to it
             TableRow<nnmpprototype1.AudioFile> row = new TableRow<>();
             row.setContextMenu(tblContext);
+
+            // Set the playback list context to the playback queue
             tblContext.setPlaybackList(mediaPlayer.getPlaybackQueue());
 
+            // Set events for mouse click
             row.setOnMouseClicked(event -> {
 
+                // Clear all selected values if clicked
                 if (event.getClickCount() == 1) {
                     listView.getSelectionModel().clearSelection();
                 }
 
+                // Create context menu for selected item if right mouse click
                 if (event.getClickCount() == 1 && event.getButton() == MouseButton.SECONDARY) {
                     tblContext.setAudioFile(row.getItem());
                 }
 
+                // If the row is double clicked
                 if (event.getClickCount() == 2 && (!row.isEmpty()) ) {
 
+                    // Set flag to false
                     playlistFlag = false;
 
+                    // Check is media player is playing
                     if (mediaPlayer.isPlaying()) {
                         if (mediaPlayer.isPaused()) {
                             mediaPlayer.resumeMediaPlayback();
@@ -752,14 +817,18 @@ public class FXMLDocumentController implements Initializable, Observer {
                         mediaPlayer.stopMediaPlayback();
                     }
 
+                    // Clear the playback queue and queue the selected file
                     mediaPlayer.clearPlaybackQueue();
                     mediaPlayer.playFileAt(0);
                     nnmpprototype1.AudioFile rowData = row.getItem();
                     mediaPlayer.enqueueToPlaybackQueue(rowData);
 
+                    // Play the selected item
                     play();
                 }
             });
+
+            // Return the row
             return row ;
         });
     }

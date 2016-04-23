@@ -1,7 +1,9 @@
-package nnmpprototype1;
+package controllers;
 
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import nnmpprototype1.M3UPlaylistGenerator;
+import nnmpprototype1.PlaybackList;
 
 import java.io.File;
 
@@ -13,7 +15,7 @@ public class M3UPlaylistController {
     /**
      * Default Constructor
      */
-    M3UPlaylistController() {
+    public M3UPlaylistController() {
 
     }
 

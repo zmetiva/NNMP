@@ -1,4 +1,4 @@
-package nnmpprototype1;
+package dialogs;
 
 import com.xuggle.mediatool.IMediaReader;
 import com.xuggle.mediatool.IMediaWriter;
@@ -16,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import nnmpprototype1.AudioFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,39 +33,39 @@ import java.util.ResourceBundle;
  */
 public class FXMLCDRipperController implements Initializable {
 
-    // The choice box for the CD Drives
+    /** The choice box for the CD **/
     @FXML ChoiceBox choiceDrive;
 
-    // The textbox that holds the location
+    /** The textbox that holds the location **/
     @FXML TextField txtDest;
 
-    // The list view that holds the files
+    /** The list view that holds the files **/
     @FXML ListView lvFiles;
 
-    // The GUI metadata fields to export to the file
+    /** The GUI metadata fields to export to the file **/
     @FXML TextField txtTitle;
     @FXML TextField txtArtist;
     @FXML TextField txtAlbum;
     @FXML TextField txtTrack;
     @FXML TextField txtYear;
 
-    // The status label and progress bar
+    /** The status label and progress bar **/
     @FXML Label lblStatus;
     @FXML ProgressBar prgBar;
 
-    // The rip cd button
+    /** The rip cd button **/
     @FXML Button btnRipCd;
 
-    // The save metadata button
+    /** The save metadata button **/
     @FXML CheckBox chkSave;
 
-    // The list of CD tracks to be ripped
+    /** The list of CD tracks to be ripped **/
     private List<nnmpprototype1.AudioFile> cdTracks = new ArrayList<>();
 
-    // The audio file
+    /** The audio file **/
     private nnmpprototype1.AudioFile audioFile = new AudioFile();
 
-    // The main stage for the GUI
+    /** The main stage for the GUI **/
     private Stage stage = new Stage();
 
     /**
@@ -82,7 +83,7 @@ public class FXMLCDRipperController implements Initializable {
             e.printStackTrace();
         }
 
-        //
+        // Add listener to the list view
         lvFiles.getSelectionModel().selectedIndexProperty().addListener((listener) ->{
 
             // Set the metadata to the selected file on change
